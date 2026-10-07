@@ -4,11 +4,29 @@
     "version": "0.2.5",
     "titleLang": {
       "en": "Android TV Remote",
-      "de": "Android TV Remote"
+      "de": "Android TV Remote",
+      "ru": "Android TV Remote",
+      "pt": "Android TV Remote",
+      "nl": "Android TV Remote",
+      "fr": "Android TV Remote",
+      "it": "Android TV Remote",
+      "es": "Android TV Remote",
+      "pl": "Android TV Remote",
+      "uk": "Android TV Remote",
+      "zh-cn": "Android TV Remote"
     },
     "desc": {
       "en": "Control Android TV / Google TV via Android TV Remote v2 protocol without ADB",
-      "de": "Android TV / Google TV über das Android TV Remote v2 Protokoll ohne ADB steuern"
+      "de": "Android TV / Google TV über das Android TV Remote v2 Protokoll ohne ADB steuern",
+      "ru": "Управление Android TV / Google TV через протокол Android TV Remote v2 без ADB",
+      "pt": "Controle Android TV / Google TV através do protocolo Android TV Remote v2 sem ADB",
+      "nl": "Bedien Android TV / Google TV via het Android TV Remote v2-protocol zonder ADB",
+      "fr": "Contrôlez Android TV / Google TV via le protocole Android TV Remote v2 sans ADB",
+      "it": "Controlla Android TV / Google TV tramite il protocollo Android TV Remote v2 senza ADB",
+      "es": "Controla Android TV / Google TV mediante el protocolo Android TV Remote v2 sin ADB",
+      "pl": "Sterowanie Android TV / Google TV przez protokół Android TV Remote v2 bez ADB",
+      "uk": "Керування Android TV / Google TV через протокол Android TV Remote v2 без ADB",
+      "zh-cn": "通过 Android TV Remote v2 协议控制 Android TV / Google TV，无需 ADB"
     },
     "authors": [
       "Henrik Schönhofen <henrik.schoenhofen@icloud.com>"
@@ -51,7 +69,22 @@
     "readme": "https://github.com/backfisch88/ioBroker.androidtvremote/blob/main/README.md",
     "loglevel": "info",
     "tier": 3,
-    "type": "multimedia"
+    "type": "multimedia",
+    "news": {
+      "0.2.5": {
+        "en": "Initial release with Android TV Remote v2 support, secure pairing, power and volume states, current app detection, remote control commands and optional Google Cast media information.",
+        "de": "Erste Veröffentlichung mit Android TV Remote v2, sicherem Pairing, Power- und Lautstärkestatus, Erkennung der aktuellen App, Fernbedienungsbefehlen und optionalen Google-Cast-Medieninformationen.",
+        "ru": "Первый выпуск с поддержкой Android TV Remote v2, безопасным сопряжением и дистанционным управлением.",
+        "pt": "Versão inicial com suporte ao Android TV Remote v2, emparelhamento seguro e controlo remoto.",
+        "nl": "Eerste release met Android TV Remote v2-ondersteuning, veilige koppeling en afstandsbediening.",
+        "fr": "Première version avec prise en charge d’Android TV Remote v2, appairage sécurisé et télécommande.",
+        "it": "Prima versione con supporto Android TV Remote v2, associazione sicura e controllo remoto.",
+        "es": "Versión inicial con compatibilidad con Android TV Remote v2, emparejamiento seguro y control remoto.",
+        "pl": "Pierwsza wersja z obsługą Android TV Remote v2, bezpiecznym parowaniem i zdalnym sterowaniem.",
+        "uk": "Перший випуск із підтримкою Android TV Remote v2, безпечним сполученням і дистанційним керуванням.",
+        "zh-cn": "首个版本，支持 Android TV Remote v2、安全配对和远程控制。"
+      }
+    }
   },
   "native": {
     "host": "",
