@@ -1,66 +1,159 @@
+![Logo](admin/androidtvremote.png)
+
 # ioBroker.androidtvremote
 
-ioBroker adapter for Android TV / Google TV using Android TV Remote v2, with optional Google Cast media metadata.
+[![NPM version](https://img.shields.io/npm/v/iobroker.androidtvremote.svg)](https://www.npmjs.com/package/iobroker.androidtvremote)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## States
+Unofficial Android TV / Google TV remote control adapter for ioBroker using the Android TV Remote v2 protocol.
 
-Remote v2:
-- `info.connection`
-- `info.powered`
-- `info.currentAppId` - Android package name
-- `info.currentApp` - friendly application name
-- `info.volume.level`
-- `info.volume.maximum`
-- `info.volume.muted`
+The adapter maintains a persistent connection to an Android TV or Google TV device and provides remote control, power state, volume information, currently active application and optional Google Cast media metadata.
 
-Cast media metadata:
-- `info.cast.connection`
-- `info.cast.appId`
-- `info.cast.appName`
-- `info.media.title`
-- `info.media.subtitle`
-- `info.media.playerState`
-- `info.media.contentId`
+## Features
 
-Controls:
-- `control.pairingCode`
-- `control.key`
-- `control.text`
-- `control.appLink`
-- `control.power`
-- `control.reconnect`
-- `control.forgetPairing`
+- Android TV Remote v2 protocol
+- No ADB or wireless debugging required
+- Secure pairing with Android TV / Google TV
+- Pairing certificate stored locally after initial pairing
+- Persistent Remote v2 connection
+- Automatic reconnect after connection loss
+- Power state
+- Volume and mute state
+- Currently active Android application
+- Friendly names for many common streaming apps
+- Unknown application package detection
+- Remote key commands
+- Text input
+- App/deep-link launching
+- Power control
+- Manual reconnect
+- Pairing reset
+- Optional Google Cast session and media metadata
 
-## Development/install workflow
+## Requirements
 
-Source directory:
+- ioBroker
+- Node.js 22 or newer
+- Android TV or Google TV device supporting the Android TV Remote v2 protocol
+- ioBroker host and Android TV / Google TV device must be reachable over the network
 
-```bash
-/home/pi/ioBroker.androidtvremote
-```
+Default Android TV Remote v2 ports:
 
-Install dependencies there as the `iobroker` user, then replace the installed adapter directory with a real copy:
+| Function | Port |
+|----------|------|
+| Remote | 6466 |
+| Pairing | 6467 |
 
-```bash
-chown -R iobroker:iobroker /home/pi/ioBroker.androidtvremote
-su -s /bin/bash iobroker -c 'cd /home/pi/ioBroker.androidtvremote && npm install'
+## Installation
 
-rm -rf /opt/iobroker/node_modules/iobroker.androidtvremote
-cp -a /home/pi/ioBroker.androidtvremote /opt/iobroker/node_modules/iobroker.androidtvremote
-chown -R iobroker:iobroker /opt/iobroker/node_modules/iobroker.androidtvremote
+Install the adapter in ioBroker and create an instance.
 
-cd /opt/iobroker
-iobroker upload androidtvremote --allow-root
-iobroker restart androidtvremote.0 --allow-root
-```
+Enter the IP address or hostname of the Android TV / Google TV device in the adapter configuration.
 
-Node.js 22+ is required by `@kud/androidtv-remote`.
+## Pairing
 
+On the first connection, the Android TV / Google TV device displays a pairing code.
 
-## App-Namen (0.2.1)
+Enter this code into:
 
-`info.currentAppId` enthält die originale Android-Paket-ID. `info.currentApp` enthält einen lesbaren Namen für gängige Apps (u.a. Netflix, YouTube, Prime Video, ARD, ZDF, RTL+, MagentaTV, Joyn, Zattoo, waipu.tv, DAZN, Spotify, KiKA, WOW, Disney+ und Apple TV). Unbekannte Paket-IDs werden zusätzlich in `info.currentAppUnknown` geschrieben, damit das Mapping leicht erweitert werden kann.
+    androidtvremote.0.control.pairingCode
 
+After successful pairing, the certificate is stored locally by the adapter and normally no further pairing is required.
 
-## Connection handling (0.2.5)
-The adapter keeps the Android TV Remote v2 session open. Protocol ping requests are handled by @kud/androidtv-remote. A failed initial connection is retried using the configured reconnect interval; healthy sessions are no longer periodically destroyed and rebuilt.
+To remove the stored pairing information and pair again, trigger:
+
+    androidtvremote.0.control.forgetPairing
+
+## Configuration
+
+| Setting | Description | Default |
+|---------|-------------|---------|
+| IP address / hostname | Android TV / Google TV device | |
+| Pairing name | Name shown on the TV during pairing | ioBroker |
+| Pairing port | Android TV Remote v2 pairing port | 6467 |
+| Remote port | Android TV Remote v2 remote-control port | 6466 |
+| Reconnect interval | Delay before reconnecting after a failed connection | 15 s |
+| Protocol debug | Enable additional protocol logging | disabled |
+| Cast media information | Enable optional Google Cast monitoring | enabled |
+| Cast polling interval | Interval for checking Cast media information | 5 s |
+
+## Datapoints
+
+### Information
+
+    info.connection
+    info.pairingRequired
+    info.powered
+    info.currentAppId
+    info.currentApp
+    info.currentAppUnknown
+    info.volume.level
+    info.volume.maximum
+    info.volume.muted
+
+`info.currentAppId` contains the original Android package name.
+
+`info.currentApp` provides a human-readable application name for many common applications, including Netflix, YouTube, Prime Video, ARD, ZDF, RTL+, MagentaTV, Joyn, Zattoo, waipu.tv, DAZN, Spotify, KiKA, WOW, Disney+ and Apple TV.
+
+Unknown package names are additionally written to `info.currentAppUnknown` so that the application mapping can easily be extended.
+
+### Controls
+
+    control.pairingCode
+    control.key
+    control.text
+    control.appLink
+    control.power
+    control.reconnect
+    control.forgetPairing
+
+### Google Cast
+
+When Cast monitoring is enabled:
+
+    info.cast.connection
+    info.cast.appId
+    info.cast.appName
+    info.media.title
+    info.media.subtitle
+    info.media.playerState
+    info.media.contentId
+
+## Media metadata
+
+Android TV Remote v2 itself provides information about the currently active Android application, but does not expose complete media metadata for every native Android TV application.
+
+The optional Cast integration can provide title, subtitle and playback state when an active Google Cast receiver session exposes this information.
+
+Therefore, media metadata may not be available for applications that are running natively on the Android TV device.
+
+## Connection handling
+
+The adapter keeps the Android TV Remote v2 connection open instead of periodically disconnecting and rebuilding it.
+
+Protocol ping requests are handled by the underlying Remote v2 library.
+
+If the initial connection fails or an established connection is lost, the adapter retries the connection using the configured reconnect interval.
+
+## Changelog
+
+### 0.2.5 (2026-10-07)
+
+- Improved Remote v2 connection handling
+- Persistent Remote v2 session instead of periodically forcing reconnects
+- Failed initial connections are detected and retried automatically
+- Protocol ping handling is left to the Android TV Remote v2 library
+- Improved reconnect behavior after temporary network/device unavailability
+- Android TV / Google TV power, volume and current-app states
+- Friendly application-name mapping
+- Optional Google Cast media metadata
+- Remote keys, text input, app links and power control
+- Secure pairing with locally stored certificate
+
+## License
+
+MIT License
+
+Copyright (c) 2026 Henrik Schönhofen (backfisch88)
+
+See [LICENSE](LICENSE) for the full license text.
