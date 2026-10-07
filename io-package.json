@@ -1,0 +1,52 @@
+{
+  "common": {
+    "name": "androidtvremote",
+    "version": "0.2.5",
+    "titleLang": {
+      "en": "Android TV Remote",
+      "de": "Android TV Remote"
+    },
+    "desc": {
+      "en": "Control Android TV / Google TV via Android TV Remote v2 protocol without ADB",
+      "de": "Android TV / Google TV über das Android TV Remote v2 Protokoll ohne ADB steuern"
+    },
+    "authors": [
+      "Henrik Schönhofen / OpenAI"
+    ],
+    "license": "MIT",
+    "platform": "Javascript/Node.js",
+    "mode": "daemon",
+    "enabled": true,
+    "messagebox": true,
+    "compact": true,
+    "connectionType": "local",
+    "dataSource": "push",
+    "adminUI": {
+      "config": "json"
+    },
+    "dataFolder": "androidtvremote.%INSTANCE%",
+    "dependencies": [
+      {
+        "js-controller": ">=6.0.11"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=7.7.22"
+      }
+    ],
+    "icon": "androidtvremote.png"
+  },
+  "native": {
+    "host": "",
+    "deviceName": "ioBroker",
+    "pairingPort": 6467,
+    "remotePort": 6466,
+    "reconnectSeconds": 15,
+    "debugProtocol": false,
+    "enableCast": true,
+    "castPollSeconds": 5
+  },
+  "objects": [],
+  "instanceObjects": []
+}

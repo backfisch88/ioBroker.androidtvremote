@@ -1,0 +1,67 @@
+{
+  "type": "panel",
+  "items": {
+    "host": {
+      "type": "text",
+      "label": "IP-Adresse / Hostname",
+      "help": "IP-Adresse oder Hostname des Android TV / Google TV",
+      "sm": 6,
+      "newLine": true
+    },
+    "deviceName": {
+      "type": "text",
+      "label": "Anzeigename beim Pairing",
+      "default": "ioBroker",
+      "sm": 6
+    },
+    "pairingPort": {
+      "type": "number",
+      "label": "Pairing-Port",
+      "default": 6467,
+      "min": 1,
+      "max": 65535,
+      "sm": 4,
+      "newLine": true
+    },
+    "remotePort": {
+      "type": "number",
+      "label": "Remote-Port",
+      "default": 6466,
+      "min": 1,
+      "max": 65535,
+      "sm": 4
+    },
+    "reconnectSeconds": {
+      "type": "number",
+      "label": "Reconnect nach Sekunden",
+      "default": 15,
+      "min": 5,
+      "max": 3600,
+      "sm": 4
+    },
+    "debugProtocol": {
+      "type": "checkbox",
+      "label": "Protokoll-Debug aktivieren",
+      "default": false,
+      "newLine": true
+    },
+    "hint": {
+      "type": "staticText",
+      "text": "Beim ersten Start zeigt der Fernseher einen Pairing-Code. Diesen unter Objekte → androidtvremote.X → control → pairingCode eintragen. Danach wird das Zertifikat lokal gespeichert."
+    },
+    "enableCast": {
+      "type": "checkbox",
+      "label": "Cast-Medieninfos aktivieren",
+      "default": true,
+      "newLine": true
+    },
+    "castPollSeconds": {
+      "type": "number",
+      "label": "Cast-Abfrage alle Sekunden",
+      "default": 5,
+      "min": 3,
+      "max": 60,
+      "sm": 4
+    }
+  }
+}

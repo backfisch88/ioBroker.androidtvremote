@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# npm package archives
+*.tgz
+
+# Logs
+*.log
+npm-debug.log*
+
+# Credentials / certificates
+credentials.json
+*.pem
+*.key
+*.crt
+*.p12
+
+# Environment files
+.env
+.env.*
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store

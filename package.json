@@ -1,0 +1,31 @@
+{
+  "name": "iobroker.androidtvremote",
+  "version": "0.2.5",
+  "description": "ioBroker adapter for Android TV / Google TV using the Android TV Remote v2 protocol",
+  "author": "Henrik Schönhofen / OpenAI",
+  "homepage": "https://github.com/",
+  "license": "MIT",
+  "keywords": [
+    "iobroker",
+    "android tv",
+    "google tv",
+    "remote",
+    "androidtvremote2"
+  ],
+  "main": "main.js",
+  "files": [
+    "admin/",
+    "io-package.json",
+    "main.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@iobroker/adapter-core": "^3.4.3",
+    "@kud/androidtv-remote": "^0.1.2",
+    "castv2-client": "^1.2.0"
+  }
+}
