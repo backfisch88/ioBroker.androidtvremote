@@ -11,7 +11,7 @@
       "de": "Android TV / Google TV über das Android TV Remote v2 Protokoll ohne ADB steuern"
     },
     "authors": [
-      "Henrik Schönhofen / OpenAI"
+      "Henrik Schönhofen <henrik.schoenhofen@gmx.de>"
     ],
     "license": "MIT",
     "platform": "Javascript/Node.js",
