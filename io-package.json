@@ -35,7 +35,23 @@
         "admin": ">=7.7.22"
       }
     ],
-    "icon": "androidtvremote.png"
+    "icon": "androidtvremote.png",
+    "keywords": [
+      "android tv",
+      "google tv",
+      "remote",
+      "androidtv",
+      "multimedia"
+    ],
+    "licenseInformation": {
+      "license": "MIT",
+      "type": "free"
+    },
+    "extIcon": "https://raw.githubusercontent.com/backfisch88/ioBroker.androidtvremote/main/admin/androidtvremote.png",
+    "readme": "https://github.com/backfisch88/ioBroker.androidtvremote/blob/main/README.md",
+    "loglevel": "info",
+    "tier": 3,
+    "type": "multimedia"
   },
   "native": {
     "host": "",
