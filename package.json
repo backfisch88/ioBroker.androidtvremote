@@ -4,7 +4,7 @@
   "description": "ioBroker adapter for Android TV / Google TV using the Android TV Remote v2 protocol",
   "author": {
     "name": "Henrik Schönhofen",
-    "email": "henrik.schoenhofen@gmx.de"
+    "email": "henrik.schoenhofen@icloud.com"
   },
   "homepage": "https://github.com/backfisch88/ioBroker.androidtvremote",
   "license": "MIT",
