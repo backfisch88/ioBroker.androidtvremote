@@ -215,8 +215,16 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             await this.setStateAsync('info.connection', false, true);
             await this.setStateAsync('info.pairingRequired', true, true);
             this.pairingRequested = true;
-            try { await this.deleteCertificate(); } catch (_) {}
-            this.log.warn('Pairing wurde vom Android-TV-Gerät abgelehnt oder widerrufen.');
+
+            // Gespeicherte Credentials hier NICHT löschen.
+            // Ein temporärer Verbindungs-/Authentifizierungsfehler darf nicht
+            // dazu führen, dass ein funktionierendes Pairing dauerhaft
+            // verloren geht. Credentials werden ausschließlich über
+            // control.forgetPairing bewusst gelöscht.
+            this.log.warn(
+                'Android TV meldet "unpaired". Gespeichertes Pairing bleibt erhalten. ' +
+                'Falls ein neues Pairing wirklich erforderlich ist, control.forgetPairing verwenden.'
+            );
         });
 
         remote.on('error', async error => {

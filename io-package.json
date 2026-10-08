@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "androidtvremote",
-    "version": "0.2.5",
+    "version": "0.2.6",
     "titleLang": {
       "en": "Android TV Remote",
       "de": "Android TV Remote",
@@ -71,6 +71,10 @@
     "tier": 3,
     "type": "multimedia",
     "news": {
+      "0.2.6": {
+        "en": "Improved pairing credential persistence. Credentials are no longer deleted automatically on unpaired events.",
+        "de": "Verbesserte Speicherung der Pairing-Zugangsdaten. Bei Unpaired-Ereignissen werden Zertifikate nicht mehr automatisch gelöscht."
+      },
       "0.2.5": {
         "en": "Initial release with Android TV Remote v2 support, secure pairing, power and volume states, current app detection, remote control commands and optional Google Cast media information.",
         "de": "Erste Veröffentlichung mit Android TV Remote v2, sicherem Pairing, Power- und Lautstärkestatus, Erkennung der aktuellen App, Fernbedienungsbefehlen und optionalen Google-Cast-Medieninformationen.",
