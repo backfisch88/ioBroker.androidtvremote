@@ -9,7 +9,7 @@
   "homepage": "https://github.com/backfisch88/ioBroker.androidtvremote",
   "license": "MIT",
   "keywords": [
-    "iobroker",
+    "ioBroker",
     "android tv",
     "google tv",
     "remote",
@@ -37,5 +37,16 @@
   },
   "bugs": {
     "url": "https://github.com/backfisch88/ioBroker.androidtvremote/issues"
+  },
+  "scripts": {
+    "test": "node --check main.js",
+    "lint": "eslint main.js",
+    "check": "node --check main.js"
+  },
+  "devDependencies": {
+    "@iobroker/eslint-config": "2.3.4",
+    "@iobroker/testing": "6.2.1",
+    "@types/node": "22.20.5",
+    "eslint": "9.39.5"
   }
 }

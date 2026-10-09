@@ -168,6 +168,6 @@ If the initial connection fails or an established connection is lost, the adapte
 
 MIT License
 
-Copyright (c) 2026 Henrik Schönhofen (backfisch88)
+Copyright (c) 2026 Henrik Schönhofen <henrik.schoenhofen@icloud.com>
 
 See [LICENSE](LICENSE) for the full license text.
