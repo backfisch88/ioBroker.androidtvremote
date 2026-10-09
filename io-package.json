@@ -72,11 +72,29 @@
     "news": {
       "0.2.7": {
         "en": "Added automated GitHub Actions release workflow for GitHub and npm publishing.",
-        "de": "Automatischen GitHub-Actions-Release-Workflow für Veröffentlichungen auf GitHub und npm eingerichtet."
+        "de": "Automatischen GitHub-Actions-Release-Workflow für Veröffentlichungen auf GitHub und npm eingerichtet.",
+        "ru": "Добавлен автоматизированный процесс публикации на GitHub и npm через GitHub Actions.",
+        "pt": "Adicionado um fluxo automatizado do GitHub Actions para publicação no GitHub e npm.",
+        "nl": "Geautomatiseerde GitHub Actions-workflow toegevoegd voor publicatie op GitHub en npm.",
+        "fr": "Ajout d'un workflow GitHub Actions automatisé pour la publication sur GitHub et npm.",
+        "it": "Aggiunto un workflow GitHub Actions automatizzato per la pubblicazione su GitHub e npm.",
+        "es": "Añadido un flujo de trabajo automatizado de GitHub Actions para publicar en GitHub y npm.",
+        "pl": "Dodano automatyczny proces GitHub Actions do publikowania w GitHub i npm.",
+        "uk": "Додано автоматизований процес GitHub Actions для публікації на GitHub і npm.",
+        "zh-cn": "新增用于发布到 GitHub 和 npm 的自动化 GitHub Actions 工作流程."
       },
       "0.2.6": {
         "en": "Improved pairing credential persistence. Credentials are no longer deleted automatically on unpaired events.",
-        "de": "Verbesserte Speicherung der Pairing-Zugangsdaten. Bei Unpaired-Ereignissen werden Zertifikate nicht mehr automatisch gelöscht."
+        "de": "Verbesserte Speicherung der Pairing-Zugangsdaten. Bei Unpaired-Ereignissen werden Zertifikate nicht mehr automatisch gelöscht.",
+        "ru": "Улучшено сохранение данных сопряжения. Сертификаты больше не удаляются автоматически при потере сопряжения.",
+        "pt": "Melhorada a persistência das credenciais de emparelhamento. Os certificados deixam de ser eliminados automaticamente quando ocorre um evento de desemparelhamento.",
+        "nl": "Opslag van koppelgegevens verbeterd. Certificaten worden niet langer automatisch verwijderd bij ontkoppelingsgebeurtenissen.",
+        "fr": "Amélioration de la conservation des identifiants d'appairage. Les certificats ne sont plus supprimés automatiquement lors d'un événement de désappairage.",
+        "it": "Migliorata la conservazione delle credenziali di associazione. I certificati non vengono più eliminati automaticamente in caso di disassociazione.",
+        "es": "Mejorada la conservación de las credenciales de emparejamiento. Los certificados ya no se eliminan automáticamente al producirse una desvinculación.",
+        "pl": "Ulepszono przechowywanie danych parowania. Certyfikaty nie są już automatycznie usuwane podczas zdarzeń rozparowania.",
+        "uk": "Покращено збереження даних сполучення. Сертифікати більше не видаляються автоматично під час роз'єднання.",
+        "zh-cn": "改进配对凭据的持久化存储。发生取消配对事件时不再自动删除证书."
       }
     }
   },
