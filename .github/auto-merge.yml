@@ -1,0 +1,5 @@
+# Patch- und Minor-Updates automatisch zusammenführen.
+# Major-Updates bleiben manuell.
+
+- match:
+    update_type: "semver:minor"
