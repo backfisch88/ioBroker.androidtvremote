@@ -39,14 +39,17 @@
     "url": "https://github.com/backfisch88/ioBroker.androidtvremote/issues"
   },
   "scripts": {
-    "test": "node --check main.js",
+    "test": "npm run test:package && npm run test:unit",
     "lint": "eslint main.js",
-    "check": "node --check main.js"
+    "check": "node --check main.js",
+    "test:package": "mocha test/package.test.js",
+    "test:integration": "mocha test/integration.test.js",
+    "test:unit": "node --check main.js"
   },
   "devDependencies": {
-    "@iobroker/eslint-config": "2.3.4",
-    "@iobroker/testing": "6.2.1",
-    "@types/node": "22.20.5",
-    "eslint": "9.39.5"
+    "@iobroker/eslint-config": "^2.3.4",
+    "@iobroker/testing": "^6.2.1",
+    "@types/node": "^22.20.5",
+    "mocha": "^11.8.0"
   }
 }

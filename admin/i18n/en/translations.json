@@ -1,0 +1,12 @@
+{
+  "IP-Adresse / Hostname": "IP address / Hostname",
+  "IP-Adresse oder Hostname des Android TV / Google TV": "IP address or hostname of the Android TV / Google TV",
+  "Anzeigename beim Pairing": "Display name during pairing",
+  "Pairing-Port": "Pairing port",
+  "Remote-Port": "Remote port",
+  "Reconnect nach Sekunden": "Reconnect after seconds",
+  "Protokoll-Debug aktivieren": "Enable protocol debugging",
+  "Beim ersten Start zeigt der Fernseher einen Pairing-Code. Diesen unter Objekte → androidtvremote.X → control → pairingCode eintragen. Danach wird das Zertifikat lokal gespeichert.": "On first startup, the TV displays a pairing code. Enter it under Objects → androidtvremote.X → control → pairingCode. The certificate is then stored locally.",
+  "Cast-Medieninfos aktivieren": "Enable Cast media information",
+  "Cast-Abfrage alle Sekunden": "Cast polling interval in seconds"
+}

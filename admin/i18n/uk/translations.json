@@ -1,0 +1,12 @@
+{
+  "IP-Adresse / Hostname": "IP-адреса / Ім'я хоста",
+  "IP-Adresse oder Hostname des Android TV / Google TV": "IP-адреса або ім'я хоста Android TV / Google TV",
+  "Anzeigename beim Pairing": "Ім'я під час сполучення",
+  "Pairing-Port": "Порт сполучення",
+  "Remote-Port": "Порт дистанційного керування",
+  "Reconnect nach Sekunden": "Повторне підключення через кілька секунд",
+  "Protokoll-Debug aktivieren": "Увімкнути налагодження протоколу",
+  "Beim ersten Start zeigt der Fernseher einen Pairing-Code. Diesen unter Objekte → androidtvremote.X → control → pairingCode eintragen. Danach wird das Zertifikat lokal gespeichert.": "Під час першого запуску телевізор показує код сполучення. Введіть його в Об'єкти → androidtvremote.X → control → pairingCode. Сертифікат буде збережено локально.",
+  "Cast-Medieninfos aktivieren": "Увімкнути інформацію про медіа Cast",
+  "Cast-Abfrage alle Sekunden": "Інтервал опитування Cast у секундах"
+}

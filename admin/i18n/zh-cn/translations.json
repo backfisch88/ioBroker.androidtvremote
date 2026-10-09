@@ -1,0 +1,12 @@
+{
+  "IP-Adresse / Hostname": "IP 地址 / 主机名",
+  "IP-Adresse oder Hostname des Android TV / Google TV": "Android TV / Google TV 的 IP 地址或主机名",
+  "Anzeigename beim Pairing": "配对时显示的名称",
+  "Pairing-Port": "配对端口",
+  "Remote-Port": "遥控端口",
+  "Reconnect nach Sekunden": "重新连接等待秒数",
+  "Protokoll-Debug aktivieren": "启用协议调试",
+  "Beim ersten Start zeigt der Fernseher einen Pairing-Code. Diesen unter Objekte → androidtvremote.X → control → pairingCode eintragen. Danach wird das Zertifikat lokal gespeichert.": "首次启动时，电视会显示配对码。请在 对象 → androidtvremote.X → control → pairingCode 中输入。证书随后保存在本地。",
+  "Cast-Medieninfos aktivieren": "启用 Cast 媒体信息",
+  "Cast-Abfrage alle Sekunden": "Cast 轮询间隔（秒）"
+}
