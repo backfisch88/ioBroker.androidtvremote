@@ -42,8 +42,8 @@
     "test": "npm run test:package && npm run test:unit",
     "lint": "eslint main.js",
     "check": "node --check main.js",
-    "test:package": "mocha test/package.test.js",
-    "test:integration": "mocha test/integration.test.js",
+    "test:package": "node ./node_modules/@iobroker/testing/node_modules/mocha/bin/mocha.js test/package.test.js",
+    "test:integration": "node ./node_modules/@iobroker/testing/node_modules/mocha/bin/mocha.js test/integration.test.js",
     "test:unit": "node --check main.js"
   },
   "devDependencies": {
