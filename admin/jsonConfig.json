@@ -5,13 +5,21 @@
       "type": "text",
       "label": "IP-Adresse / Hostname",
       "help": "IP-Adresse oder Hostname des Android TV / Google TV",
-      "sm": 6,
-      "newLine": true
+      "newLine": true,
+      "xs": 12,
+      "md": 6,
+      "lg": 6,
+      "xl": 6,
+      "sm": 6
     },
     "deviceName": {
       "type": "text",
       "label": "Anzeigename beim Pairing",
       "default": "ioBroker",
+      "xs": 12,
+      "md": 6,
+      "lg": 6,
+      "xl": 6,
       "sm": 6
     },
     "pairingPort": {
@@ -20,8 +28,12 @@
       "default": 6467,
       "min": 1,
       "max": 65535,
-      "sm": 4,
-      "newLine": true
+      "newLine": true,
+      "xs": 12,
+      "md": 4,
+      "lg": 4,
+      "xl": 4,
+      "sm": 4
     },
     "remotePort": {
       "type": "number",
@@ -29,6 +41,10 @@
       "default": 6466,
       "min": 1,
       "max": 65535,
+      "xs": 12,
+      "md": 4,
+      "lg": 4,
+      "xl": 4,
       "sm": 4
     },
     "reconnectSeconds": {
@@ -37,23 +53,42 @@
       "default": 15,
       "min": 5,
       "max": 3600,
+      "xs": 12,
+      "md": 4,
+      "lg": 4,
+      "xl": 4,
       "sm": 4
     },
     "debugProtocol": {
       "type": "checkbox",
       "label": "Protokoll-Debug aktivieren",
       "default": false,
-      "newLine": true
+      "newLine": true,
+      "xs": 12,
+      "sm": 12,
+      "md": 12,
+      "lg": 12,
+      "xl": 12
     },
     "hint": {
       "type": "staticText",
-      "text": "Beim ersten Start zeigt der Fernseher einen Pairing-Code. Diesen unter Objekte → androidtvremote.X → control → pairingCode eintragen. Danach wird das Zertifikat lokal gespeichert."
+      "text": "Beim ersten Start zeigt der Fernseher einen Pairing-Code. Diesen unter Objekte → androidtvremote.X → control → pairingCode eintragen. Danach wird das Zertifikat lokal gespeichert.",
+      "xs": 12,
+      "sm": 12,
+      "md": 12,
+      "lg": 12,
+      "xl": 12
     },
     "enableCast": {
       "type": "checkbox",
       "label": "Cast-Medieninfos aktivieren",
       "default": true,
-      "newLine": true
+      "newLine": true,
+      "xs": 12,
+      "sm": 12,
+      "md": 12,
+      "lg": 12,
+      "xl": 12
     },
     "castPollSeconds": {
       "type": "number",
@@ -61,6 +96,10 @@
       "default": 5,
       "min": 3,
       "max": 60,
+      "xs": 12,
+      "md": 4,
+      "lg": 4,
+      "xl": 4,
       "sm": 4
     }
   },

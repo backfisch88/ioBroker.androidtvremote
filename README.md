@@ -137,6 +137,16 @@ If the initial connection fails or an established connection is lost, the adapte
 
 ## Changelog
 
+<!--
+    Placeholder for the next version (at the beginning of the line):
+    ### **WORK IN PROGRESS**
+-->
+
+### 0.2.8 (2026-10-09)
+
+- Updated GitHub Actions checks and Dependabot automerge configuration
+- Maintenance release without changes to adapter runtime behavior
+
 ### 0.2.7 (2026-10-09)
 
 - Added automated GitHub Actions release workflow
@@ -144,25 +154,7 @@ If the initial connection fails or an established connection is lost, the adapte
 - Updated release documentation and changelog
 - No changes to adapter runtime behavior
 
-### 0.2.6 (2026-10-08)
-
-- Improved pairing credential persistence
-- Pairing certificates are no longer automatically deleted on `unpaired` events
-- Pairing information can still be removed manually using `control.forgetPairing`
-
-
-### 0.2.5 (2026-10-07)
-
-- Improved Remote v2 connection handling
-- Persistent Remote v2 session instead of periodically forcing reconnects
-- Failed initial connections are detected and retried automatically
-- Protocol ping handling is left to the Android TV Remote v2 library
-- Improved reconnect behavior after temporary network/device unavailability
-- Android TV / Google TV power, volume and current-app states
-- Friendly application-name mapping
-- Optional Google Cast media metadata
-- Remote keys, text input, app links and power control
-- Secure pairing with locally stored certificate
+[Older changelog entries](CHANGELOG_OLD.md)
 
 ## License
 

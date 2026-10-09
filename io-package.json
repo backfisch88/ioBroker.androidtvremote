@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "androidtvremote",
-    "version": "0.2.7",
+    "version": "0.2.8",
     "titleLang": {
       "en": "Android TV Remote",
       "de": "Android TV Remote",
@@ -70,6 +70,19 @@
     "tier": 3,
     "type": "multimedia",
     "news": {
+      "0.2.8": {
+        "en": "Maintenance release with updated GitHub Actions checks and Dependabot automerge configuration.",
+        "de": "Wartungsrelease mit aktualisierten GitHub-Actions-Prüfungen und Dependabot-Automerge-Konfiguration.",
+        "ru": "Технический выпуск с обновлёнными проверками GitHub Actions и настройкой автоматического слияния Dependabot.",
+        "pt": "Versão de manutenção com verificações do GitHub Actions e configuração de fusão automática do Dependabot atualizadas.",
+        "nl": "Onderhoudsrelease met bijgewerkte GitHub Actions-controles en Dependabot-automergeconfiguratie.",
+        "fr": "Version de maintenance avec vérifications GitHub Actions et configuration de fusion automatique Dependabot mises à jour.",
+        "it": "Versione di manutenzione con controlli GitHub Actions e configurazione di unione automatica Dependabot aggiornati.",
+        "es": "Versión de mantenimiento con comprobaciones de GitHub Actions y configuración de fusión automática de Dependabot actualizadas.",
+        "pl": "Wydanie konserwacyjne ze zaktualizowanymi testami GitHub Actions i konfiguracją automatycznego scalania Dependabot.",
+        "uk": "Технічний випуск з оновленими перевірками GitHub Actions і налаштуванням автоматичного злиття Dependabot.",
+        "zh-cn": "维护版本，更新了 GitHub Actions 检查和 Dependabot 自动合并配置。"
+      },
       "0.2.7": {
         "en": "Added automated GitHub Actions release workflow for GitHub and npm publishing.",
         "de": "Automatischen GitHub-Actions-Release-Workflow für Veröffentlichungen auf GitHub und npm eingerichtet.",
