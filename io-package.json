@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "androidtvremote",
-    "version": "0.2.7",
+    "version": "0.2.8",
     "titleLang": {
       "en": "Android TV Remote",
       "de": "Android TV Remote",
