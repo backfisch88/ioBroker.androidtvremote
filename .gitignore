@@ -20,7 +20,8 @@ credentials.json
 .env.*
 
 # Editors / OS
-.vscode/
+.vscode/*
+!.vscode/settings.json
 .idea/
 .DS_Store
 main.js.bak-*

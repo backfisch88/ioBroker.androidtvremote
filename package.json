@@ -44,11 +44,14 @@
     "check": "node --check main.js",
     "test:package": "node ./node_modules/@iobroker/testing/node_modules/mocha/bin/mocha.js test/package.test.js",
     "test:integration": "node ./node_modules/@iobroker/testing/node_modules/mocha/bin/mocha.js test/integration.test.js",
-    "test:unit": "node --check main.js"
+    "test:unit": "node --check main.js",
+    "typecheck": "tsc"
   },
   "devDependencies": {
     "@iobroker/eslint-config": "^2.3.4",
     "@iobroker/testing": "^6.2.1",
-    "@types/node": "^22.20.5"
+    "@tsconfig/node22": "^22.0.6",
+    "@types/node": "^22.20.5",
+    "typescript": "^5.9.3"
   }
 }
