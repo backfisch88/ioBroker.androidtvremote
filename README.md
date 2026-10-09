@@ -142,6 +142,11 @@ If the initial connection fails or an established connection is lost, the adapte
     ### **WORK IN PROGRESS**
 -->
 
+### 0.2.8 (2026-10-09)
+
+- Updated GitHub Actions checks and Dependabot automerge configuration
+- Maintenance release without changes to adapter runtime behavior
+
 ### 0.2.7 (2026-10-09)
 
 - Added automated GitHub Actions release workflow
