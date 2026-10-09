@@ -137,6 +137,20 @@ If the initial connection fails or an established connection is lost, the adapte
 
 ## Changelog
 
+### 0.2.7 (2026-10-09)
+
+- Added automated GitHub Actions release workflow
+- Prepared npm publishing through Trusted Publishing
+- Updated release documentation and changelog
+- No changes to adapter runtime behavior
+
+### 0.2.6 (2026-10-08)
+
+- Improved pairing credential persistence
+- Pairing certificates are no longer automatically deleted on `unpaired` events
+- Pairing information can still be removed manually using `control.forgetPairing`
+
+
 ### 0.2.5 (2026-10-07)
 
 - Improved Remote v2 connection handling

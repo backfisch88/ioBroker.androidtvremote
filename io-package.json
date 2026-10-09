@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "androidtvremote",
-    "version": "0.2.6",
+    "version": "0.2.7",
     "titleLang": {
       "en": "Android TV Remote",
       "de": "Android TV Remote",
@@ -71,6 +71,10 @@
     "tier": 3,
     "type": "multimedia",
     "news": {
+      "0.2.7": {
+        "en": "Added automated GitHub Actions release workflow for GitHub and npm publishing.",
+        "de": "Automatischen GitHub-Actions-Release-Workflow für Veröffentlichungen auf GitHub und npm eingerichtet."
+      },
       "0.2.6": {
         "en": "Improved pairing credential persistence. Credentials are no longer deleted automatically on unpaired events.",
         "de": "Verbesserte Speicherung der Pairing-Zugangsdaten. Bei Unpaired-Ereignissen werden Zertifikate nicht mehr automatisch gelöscht."
