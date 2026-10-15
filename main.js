@@ -649,14 +649,47 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
         }
     }
 
+    castWithTimeout(promise, operation, timeoutMs = 10000) {
+        return new Promise((resolve, reject) => {
+            const timer = setTimeout(() => {
+                reject(new Error(`Cast timeout: ${operation} (${timeoutMs} ms)`));
+            }, timeoutMs);
+
+            Promise.resolve(promise).then(
+                result => {
+                    clearTimeout(timer);
+                    resolve(result);
+                },
+                error => {
+                    clearTimeout(timer);
+                    reject(error);
+                },
+            );
+        });
+    }
+
+    resetCastConnection() {
+        const client = this.castClient;
+        this.castClient = null;
+        this.castPlayer = null;
+
+        if (client) {
+            try {
+                client.close();
+            } catch {
+                // Ignore cleanup errors.
+            }
+        }
+    }
+
     async pollCast() {
         if (this.castConnecting || !this.config.host) {
             return;
         }
         this.castConnecting = true;
         try {
-            await this.ensureCastConnected();
-            const sessions = await this.castGetSessions();
+            await this.castWithTimeout(this.ensureCastConnected(), 'connect');
+            const sessions = await this.castWithTimeout(this.castGetSessions(), 'getSessions');
             if (!Array.isArray(sessions) || sessions.length === 0) {
                 await this.clearMediaStates();
                 return;
@@ -666,7 +699,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             await this.setStateAsync('info.cast.appId', String(session.appId || ''), true);
             await this.setStateAsync('info.cast.appName', String(session.displayName || ''), true);
 
-            const status = await this.castJoinAndGetStatus(session);
+            const status = await this.castWithTimeout(this.castJoinAndGetStatus(session), 'getStatus');
             if (!status) {
                 return;
             }
@@ -681,17 +714,8 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
         } catch (error) {
             await this.setStateAsync('info.cast.connection', false, true);
             this.castPlayer = null;
-            if (this.config.debugProtocol) {
-                this.log.debug(`Cast-Abfrage: ${this.errorText(error)}`);
-            }
-            if (this.castClient) {
-                try {
-                    this.castClient.close();
-                } catch {
-                    // Ignore cleanup errors.
-                }
-                this.castClient = null;
-            }
+            this.log.warn(`Cast-Abfrage fehlgeschlagen: ${this.errorText(error)}. Verbindung wird neu aufgebaut.`);
+            this.resetCastConnection();
         } finally {
             this.castConnecting = false;
         }
