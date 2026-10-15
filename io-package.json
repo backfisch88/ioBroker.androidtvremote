@@ -70,6 +70,10 @@
         "tier": 3,
         "type": "multimedia",
         "news": {
+            "0.2.9": {
+                "en": "Fixed Cast polling getting stuck after unresponsive requests. Added timeouts and automatic connection recovery.",
+                "de": "Behoben: Cast- und Medieninformationen konnten nach ausbleibenden Antworten dauerhaft einfrieren. Timeouts und automatische Wiederverbindung ergänzt."
+            },
             "0.2.8": {
                 "en": "Maintenance release with updated GitHub Actions checks and Dependabot automerge configuration.",
                 "de": "Wartungsrelease mit aktualisierten GitHub-Actions-Prüfungen und Dependabot-Automerge-Konfiguration.",
