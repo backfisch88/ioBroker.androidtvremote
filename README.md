@@ -142,6 +142,13 @@ If the initial connection fails or an established connection is lost, the adapte
     ### **WORK IN PROGRESS**
 -->
 
+### 0.3.0 (2026-10-15)
+
+- Added cached Bonjour device discovery and manual device search in the adapter configuration.
+- Added device selection with a separately editable IP address / hostname field.
+- Added translated discovery status in 11 languages and Admin GUI API 2 compatibility.
+- Clear media, Cast and current-app states on power-off; restore the tested Cast media polling implementation.
+
 ### 0.2.9 (2026-10-15)
 
 - Fixed Cast polling becoming permanently stuck when requests do not respond

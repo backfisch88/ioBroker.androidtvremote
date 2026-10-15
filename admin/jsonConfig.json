@@ -1,10 +1,24 @@
 {
   "type": "panel",
   "items": {
+    "deviceSelection": {
+      "type": "custom",
+      "name": "ConfigCustomAndroidTvRemoteSet/Components/DeviceDiscovery",
+      "url": "custom/customComponents.js",
+      "bundlerType": "module",
+      "newLine": true,
+      "xs": 12,
+      "sm": 12,
+      "md": 6,
+      "lg": 6,
+      "xl": 6,
+      "doNotSave": true,
+      "guiApi": 2
+    },
     "host": {
       "type": "text",
-      "label": "IP-Adresse / Hostname",
-      "help": "IP-Adresse oder Hostname des Android TV / Google TV",
+      "label": "IP-Adresse / Hostname (manuell)",
+      "help": "IP-Adresse manuell eingeben oder oben ein Gerät auswählen.",
       "newLine": true,
       "xs": 12,
       "md": 6,
@@ -58,17 +72,6 @@
       "lg": 4,
       "xl": 4,
       "sm": 4
-    },
-    "debugProtocol": {
-      "type": "checkbox",
-      "label": "Protokoll-Debug aktivieren",
-      "default": false,
-      "newLine": true,
-      "xs": 12,
-      "sm": 12,
-      "md": 12,
-      "lg": 12,
-      "xl": 12
     },
     "hint": {
       "type": "staticText",

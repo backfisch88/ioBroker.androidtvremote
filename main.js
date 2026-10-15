@@ -23,7 +23,12 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
         this.castPlayer = null;
         this.castTimer = null;
         this.castConnecting = false;
+        this.discoveryRunning = false;
+        this.discoveryBonjour = null;
+        this.discoveryPromise = null;
+        this.discoveryDevices = [];
 
+        this.on('message', this.onMessage.bind(this));
         this.on('ready', this.onReady.bind(this));
         this.on('stateChange', this.onStateChange.bind(this));
         this.on('unload', this.onUnload.bind(this));
@@ -33,10 +38,13 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
         this.stopping = false;
         await this.setStateAsync('info.connection', false, true);
         await this.ensureObjects();
+        await this.clearPlaybackAndAppStates();
         this.subscribeStates('control.*');
+        // Einmal beim Start suchen, ohne die Verbindung zu blockieren.
+        void this.discoverDevices().catch(error => this.log.warn(`Start-Discovery: ${this.errorText(error)}`));
 
         if (!this.config.host || !String(this.config.host).trim()) {
-            this.log.error('Bitte zuerst die IP-Adresse bzw. den Hostnamen des Android-TV-Geräts konfigurieren.');
+            this.log.info('Noch kein Android-TV-Gerät konfiguriert. Discovery ist verfügbar.');
             return;
         }
 
@@ -57,6 +65,30 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
 
     async ensureObjects() {
         const defs = {
+            'control.discover': {
+                name: 'Discover Android TV devices',
+                type: 'boolean',
+                role: 'button',
+                read: true,
+                write: true,
+                def: false,
+            },
+            'info.discovery.running': {
+                name: 'Discovery running',
+                type: 'boolean',
+                role: 'indicator',
+                read: true,
+                write: false,
+                def: false,
+            },
+            'info.discovery.devices': {
+                name: 'Discovered Android TV devices',
+                type: 'string',
+                role: 'json',
+                read: true,
+                write: false,
+                def: '[]',
+            },
             'info.connection': {
                 name: 'Connected',
                 type: 'boolean',
@@ -352,6 +384,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             }
         } catch (error) {
             await this.setStateAsync('info.connection', false, true);
+            await this.clearPlaybackAndAppStates();
             this.log.warn(`Verbindung fehlgeschlagen: ${this.errorText(error)}`);
             this.scheduleReconnect();
         } finally {
@@ -368,6 +401,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
         });
 
         remote.on('ready', async () => {
+            this.lastPowered = null;
             this.pairingRequested = false;
             await this.setStateAsync('info.pairingRequired', false, true);
             await this.setStateAsync('info.connection', true, true);
@@ -385,6 +419,9 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             this.lastPowered = !!powered;
             await this.setStateAsync('info.powered', !!powered, true);
             await this.setStateAsync('control.power', !!powered, true);
+            if (!powered) {
+                await this.clearPlaybackAndAppStates();
+            }
         });
 
         remote.on('volume', async volume => {
@@ -397,6 +434,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
         });
 
         remote.on('current_app', async app => {
+            if (this.lastPowered === false || this.stopping) return;
             const appId =
                 typeof app === 'string'
                     ? app.trim()
@@ -414,6 +452,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
 
         remote.on('unpaired', async () => {
             await this.setStateAsync('info.connection', false, true);
+            await this.clearPlaybackAndAppStates();
             await this.setStateAsync('info.pairingRequired', true, true);
             this.pairingRequested = true;
 
@@ -433,6 +472,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
                 return;
             }
             await this.setStateAsync('info.connection', false, true);
+            await this.clearPlaybackAndAppStates();
             this.log.warn(`Android-TV-Protokollfehler: ${this.errorText(error)}`);
             this.scheduleReconnect();
         });
@@ -468,6 +508,16 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
 
         try {
             switch (rel) {
+                case 'control.discover': {
+                    await this.setStateAsync(rel, false, true);
+                    if (state.val === true) {
+                        void this.discoverDevices().catch(error => {
+                            this.log.warn(`Discovery fehlgeschlagen: ${this.errorText(error)}`);
+                        });
+                    }
+                    break;
+                }
+
                 case 'control.pairingCode': {
                     const code = String(state.val || '').trim();
                     if (!code) {
@@ -552,6 +602,84 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             }
         } catch (error) {
             this.log.error(`Befehl ${rel} fehlgeschlagen: ${this.errorText(error)}`);
+        }
+    }
+
+    async discoverDevices() {
+        if (this.discoveryPromise) {
+            return this.discoveryPromise;
+        }
+        if (this.stopping) {
+            return [];
+        }
+        this.discoveryRunning = true;
+        this.discoveryPromise = (async () => {
+            let bonjour;
+            const devices = new Map();
+            try {
+                await this.setStateAsync('info.discovery.running', true, true);
+                this.log.info('Discovery gestartet ...');
+                const { Bonjour } = require('bonjour-service');
+                bonjour = new Bonjour();
+                this.discoveryBonjour = bonjour;
+                const browser = bonjour.find({ type: 'androidtvremote2', protocol: 'tcp' });
+                browser.on('up', service => {
+                    for (const ip of service.addresses || []) {
+                        if (!/^\d+\.\d+\.\d+\.\d+$/.test(ip)) continue;
+                        devices.set(ip, {
+                            name: service.name || ip,
+                            ip,
+                            host: service.host || '',
+                            port: service.port || 6466,
+                        });
+                    }
+                });
+                browser.on('error', error => this.log.warn(`Discovery: ${this.errorText(error)}`));
+                await new Promise(resolve => setTimeout(resolve, 8000));
+                if (this.stopping) return this.discoveryDevices;
+                this.discoveryDevices = [...devices.values()].sort((a, b) => a.name.localeCompare(b.name));
+                await this.setStateAsync('info.discovery.devices', JSON.stringify(this.discoveryDevices), true);
+                this.log.info(`Discovery abgeschlossen: ${this.discoveryDevices.length} Gerät(e).`);
+                return this.discoveryDevices;
+            } finally {
+                if (bonjour) bonjour.destroy();
+                if (this.discoveryBonjour === bonjour) this.discoveryBonjour = null;
+                this.discoveryRunning = false;
+                if (!this.stopping) await this.setStateAsync('info.discovery.running', false, true);
+            }
+        })();
+        try {
+            return await this.discoveryPromise;
+        } finally {
+            this.discoveryPromise = null;
+        }
+    }
+
+    getDiscoveryStatus() {
+        return {
+            running: this.discoveryRunning,
+            devices: this.discoveryDevices.map(device => ({
+                value: device.ip,
+                label: `${device.name} (${device.ip})`,
+            })),
+        };
+    }
+
+    async onMessage(obj) {
+        if (!obj || !obj.callback) return;
+        try {
+            if (obj.command === 'getDiscoveryStatus') {
+                this.sendTo(obj.from, obj.command, this.getDiscoveryStatus(), obj.callback);
+            } else if (obj.command === 'startDiscovery') {
+                void this.discoverDevices().catch(error => this.log.warn(`Discovery: ${this.errorText(error)}`));
+                this.sendTo(obj.from, obj.command, this.getDiscoveryStatus(), obj.callback);
+            } else if (obj.command === 'discoverAdminDevices') {
+                // Rückwärtskompatibilität: keine erneute Netzwerksuche beim Öffnen der Admin-Seite.
+                this.sendTo(obj.from, obj.command, this.getDiscoveryStatus().devices, obj.callback);
+            }
+        } catch (error) {
+            this.log.warn(`Admin-Discovery: ${this.errorText(error)}`);
+            this.sendTo(obj.from, obj.command, { error: this.errorText(error) }, obj.callback);
         }
     }
 
@@ -683,13 +811,16 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
     }
 
     async pollCast() {
-        if (this.castConnecting || !this.config.host) {
+        if (this.lastPowered === false || this.stopping || this.castConnecting || !this.config.host) {
             return;
         }
         this.castConnecting = true;
         try {
-            await this.castWithTimeout(this.ensureCastConnected(), 'connect');
-            const sessions = await this.castWithTimeout(this.castGetSessions(), 'getSessions');
+            await this.ensureCastConnected();
+            const sessions = await this.castGetSessions();
+            if (this.lastPowered === false || this.stopping) {
+                return;
+            }
             if (!Array.isArray(sessions) || sessions.length === 0) {
                 await this.clearMediaStates();
                 return;
@@ -699,7 +830,10 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             await this.setStateAsync('info.cast.appId', String(session.appId || ''), true);
             await this.setStateAsync('info.cast.appName', String(session.displayName || ''), true);
 
-            const status = await this.castWithTimeout(this.castJoinAndGetStatus(session), 'getStatus');
+            const status = await this.castJoinAndGetStatus(session);
+            if (this.lastPowered === false || this.stopping) {
+                return;
+            }
             if (!status) {
                 return;
             }
@@ -714,8 +848,17 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
         } catch (error) {
             await this.setStateAsync('info.cast.connection', false, true);
             this.castPlayer = null;
-            this.log.warn(`Cast-Abfrage fehlgeschlagen: ${this.errorText(error)}. Verbindung wird neu aufgebaut.`);
-            this.resetCastConnection();
+            if (this.config.debugProtocol) {
+                this.log.debug(`Cast-Abfrage: ${this.errorText(error)}`);
+            }
+            if (this.castClient) {
+                try {
+                    this.castClient.close();
+                } catch {
+                    // Ignore cleanup errors.
+                }
+                this.castClient = null;
+            }
         } finally {
             this.castConnecting = false;
         }
@@ -781,6 +924,15 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
                 });
             });
         });
+    }
+
+    async clearPlaybackAndAppStates() {
+        this.resetCastConnection();
+        await this.setStateAsync('info.cast.connection', false, true);
+        await this.clearMediaStates();
+        await this.setStateAsync('info.currentApp', '', true);
+        await this.setStateAsync('info.currentAppId', '', true);
+        await this.setStateAsync('info.currentAppUnknown', '', true);
     }
 
     async clearMediaStates() {
@@ -851,6 +1003,10 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
     async onUnload(callback) {
         try {
             this.stopping = true;
+            if (this.discoveryBonjour) {
+                this.discoveryBonjour.destroy();
+                this.discoveryBonjour = null;
+            }
             this.clearReconnect();
             this.stopCastMonitor();
             await this.setStateAsync('info.connection', false, true);

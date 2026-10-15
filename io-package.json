@@ -1,130 +1,130 @@
 {
-    "common": {
-        "name": "androidtvremote",
-        "version": "0.2.9",
-        "titleLang": {
-            "en": "Android TV Remote",
-            "de": "Android TV Remote",
-            "ru": "Android TV Remote",
-            "pt": "Android TV Remote",
-            "nl": "Android TV Remote",
-            "fr": "Android TV Remote",
-            "it": "Android TV Remote",
-            "es": "Android TV Remote",
-            "pl": "Android TV Remote",
-            "uk": "Android TV Remote",
-            "zh-cn": "Android TV Remote"
-        },
-        "desc": {
-            "en": "Control Android TV / Google TV via Android TV Remote v2 protocol without ADB",
-            "de": "Android TV / Google TV über das Android TV Remote v2 Protokoll ohne ADB steuern",
-            "ru": "Управление Android TV / Google TV через протокол Android TV Remote v2 без ADB",
-            "pt": "Controle Android TV / Google TV através do protocolo Android TV Remote v2 sem ADB",
-            "nl": "Bedien Android TV / Google TV via het Android TV Remote v2-protocol zonder ADB",
-            "fr": "Contrôlez Android TV / Google TV via le protocole Android TV Remote v2 sans ADB",
-            "it": "Controlla Android TV / Google TV tramite il protocollo Android TV Remote v2 senza ADB",
-            "es": "Controla Android TV / Google TV mediante el protocolo Android TV Remote v2 sin ADB",
-            "pl": "Sterowanie Android TV / Google TV przez protokół Android TV Remote v2 bez ADB",
-            "uk": "Керування Android TV / Google TV через протокол Android TV Remote v2 без ADB",
-            "zh-cn": "通过 Android TV Remote v2 协议控制 Android TV / Google TV，无需 ADB"
-        },
-        "authors": [
-            "Henrik Schönhofen <henrik.schoenhofen@icloud.com>"
-        ],
-        "platform": "Javascript/Node.js",
-        "mode": "daemon",
-        "enabled": true,
-        "messagebox": true,
-        "compact": true,
-        "connectionType": "local",
-        "dataSource": "push",
-        "adminUI": {
-            "config": "json"
-        },
-        "dataFolder": "androidtvremote.%INSTANCE%",
-        "dependencies": [
-            {
-                "js-controller": ">=6.0.11"
-            }
-        ],
-        "globalDependencies": [
-            {
-                "admin": ">=7.7.22"
-            }
-        ],
-        "icon": "androidtvremote.png",
-        "keywords": [
-            "android tv",
-            "google tv",
-            "remote",
-            "androidtv",
-            "multimedia"
-        ],
-        "licenseInformation": {
-            "license": "MIT",
-            "type": "free"
-        },
-        "extIcon": "https://raw.githubusercontent.com/backfisch88/ioBroker.androidtvremote/main/admin/androidtvremote.png",
-        "readme": "https://github.com/backfisch88/ioBroker.androidtvremote/blob/main/README.md",
-        "loglevel": "info",
-        "tier": 3,
-        "type": "multimedia",
-        "news": {
-            "0.2.9": {
-                "en": "Fixed Cast polling getting stuck after unresponsive requests. Added timeouts and automatic connection recovery.",
-                "de": "Behoben: Cast- und Medieninformationen konnten nach ausbleibenden Antworten dauerhaft einfrieren. Timeouts und automatische Wiederverbindung ergänzt."
-            },
-            "0.2.8": {
-                "en": "Maintenance release with updated GitHub Actions checks and Dependabot automerge configuration.",
-                "de": "Wartungsrelease mit aktualisierten GitHub-Actions-Prüfungen und Dependabot-Automerge-Konfiguration.",
-                "ru": "Технический выпуск с обновлёнными проверками GitHub Actions и настройкой автоматического слияния Dependabot.",
-                "pt": "Versão de manutenção com verificações do GitHub Actions e configuração de fusão automática do Dependabot atualizadas.",
-                "nl": "Onderhoudsrelease met bijgewerkte GitHub Actions-controles en Dependabot-automergeconfiguratie.",
-                "fr": "Version de maintenance avec vérifications GitHub Actions et configuration de fusion automatique Dependabot mises à jour.",
-                "it": "Versione di manutenzione con controlli GitHub Actions e configurazione di unione automatica Dependabot aggiornati.",
-                "es": "Versión de mantenimiento con comprobaciones de GitHub Actions y configuración de fusión automática de Dependabot actualizadas.",
-                "pl": "Wydanie konserwacyjne ze zaktualizowanymi testami GitHub Actions i konfiguracją automatycznego scalania Dependabot.",
-                "uk": "Технічний випуск з оновленими перевірками GitHub Actions і налаштуванням автоматичного злиття Dependabot.",
-                "zh-cn": "维护版本，更新了 GitHub Actions 检查和 Dependabot 自动合并配置。"
-            },
-            "0.2.7": {
-                "en": "Added automated GitHub Actions release workflow for GitHub and npm publishing.",
-                "de": "Automatischen GitHub-Actions-Release-Workflow für Veröffentlichungen auf GitHub und npm eingerichtet.",
-                "ru": "Добавлен автоматизированный процесс публикации на GitHub и npm через GitHub Actions.",
-                "pt": "Adicionado um fluxo automatizado do GitHub Actions para publicação no GitHub e npm.",
-                "nl": "Geautomatiseerde GitHub Actions-workflow toegevoegd voor publicatie op GitHub en npm.",
-                "fr": "Ajout d'un workflow GitHub Actions automatisé pour la publication sur GitHub et npm.",
-                "it": "Aggiunto un workflow GitHub Actions automatizzato per la pubblicazione su GitHub e npm.",
-                "es": "Añadido un flujo de trabajo automatizado de GitHub Actions para publicar en GitHub y npm.",
-                "pl": "Dodano automatyczny proces GitHub Actions do publikowania w GitHub i npm.",
-                "uk": "Додано автоматизований процес GitHub Actions для публікації на GitHub і npm.",
-                "zh-cn": "新增用于发布到 GitHub 和 npm 的自动化 GitHub Actions 工作流程."
-            },
-            "0.2.6": {
-                "en": "Improved pairing credential persistence. Credentials are no longer deleted automatically on unpaired events.",
-                "de": "Verbesserte Speicherung der Pairing-Zugangsdaten. Bei Unpaired-Ereignissen werden Zertifikate nicht mehr automatisch gelöscht.",
-                "ru": "Улучшено сохранение данных сопряжения. Сертификаты больше не удаляются автоматически при потере сопряжения.",
-                "pt": "Melhorada a persistência das credenciais de emparelhamento. Os certificados deixam de ser eliminados automaticamente quando ocorre um evento de desemparelhamento.",
-                "nl": "Opslag van koppelgegevens verbeterd. Certificaten worden niet langer automatisch verwijderd bij ontkoppelingsgebeurtenissen.",
-                "fr": "Amélioration de la conservation des identifiants d'appairage. Les certificats ne sont plus supprimés automatiquement lors d'un événement de désappairage.",
-                "it": "Migliorata la conservazione delle credenziali di associazione. I certificati non vengono più eliminati automaticamente in caso di disassociazione.",
-                "es": "Mejorada la conservación de las credenciales de emparejamiento. Los certificados ya no se eliminan automáticamente al producirse una desvinculación.",
-                "pl": "Ulepszono przechowywanie danych parowania. Certyfikaty nie są już automatycznie usuwane podczas zdarzeń rozparowania.",
-                "uk": "Покращено збереження даних сполучення. Сертифікати більше не видаляються автоматично під час роз'єднання.",
-                "zh-cn": "改进配对凭据的持久化存储。发生取消配对事件时不再自动删除证书."
-            }
-        }
+  "common": {
+    "name": "androidtvremote",
+    "version": "0.3.0",
+    "titleLang": {
+      "en": "Android TV Remote",
+      "de": "Android TV Remote",
+      "ru": "Android TV Remote",
+      "pt": "Android TV Remote",
+      "nl": "Android TV Remote",
+      "fr": "Android TV Remote",
+      "it": "Android TV Remote",
+      "es": "Android TV Remote",
+      "pl": "Android TV Remote",
+      "uk": "Android TV Remote",
+      "zh-cn": "Android TV Remote"
     },
-    "native": {
-        "host": "",
-        "deviceName": "ioBroker",
-        "pairingPort": 6467,
-        "remotePort": 6466,
-        "reconnectSeconds": 15,
-        "debugProtocol": false,
-        "enableCast": true,
-        "castPollSeconds": 5
+    "desc": {
+      "en": "Control Android TV / Google TV via Android TV Remote v2 protocol without ADB",
+      "de": "Android TV / Google TV über das Android TV Remote v2 Protokoll ohne ADB steuern",
+      "ru": "Управление Android TV / Google TV через протокол Android TV Remote v2 без ADB",
+      "pt": "Controle Android TV / Google TV através do protocolo Android TV Remote v2 sem ADB",
+      "nl": "Bedien Android TV / Google TV via het Android TV Remote v2-protocol zonder ADB",
+      "fr": "Contrôlez Android TV / Google TV via le protocole Android TV Remote v2 sans ADB",
+      "it": "Controlla Android TV / Google TV tramite il protocollo Android TV Remote v2 senza ADB",
+      "es": "Controla Android TV / Google TV mediante el protocolo Android TV Remote v2 sin ADB",
+      "pl": "Sterowanie Android TV / Google TV przez protokół Android TV Remote v2 bez ADB",
+      "uk": "Керування Android TV / Google TV через протокол Android TV Remote v2 без ADB",
+      "zh-cn": "通过 Android TV Remote v2 协议控制 Android TV / Google TV，无需 ADB"
     },
-    "objects": [],
-    "instanceObjects": []
+    "authors": [
+      "Henrik Schönhofen <henrik.schoenhofen@icloud.com>"
+    ],
+    "platform": "Javascript/Node.js",
+    "mode": "daemon",
+    "enabled": true,
+    "messagebox": true,
+    "compact": true,
+    "connectionType": "local",
+    "dataSource": "push",
+    "adminUI": {
+      "config": "json"
+    },
+    "dataFolder": "androidtvremote.%INSTANCE%",
+    "dependencies": [
+      {
+        "js-controller": ">=6.0.11"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=7.7.22"
+      }
+    ],
+    "icon": "androidtvremote.png",
+    "keywords": [
+      "android tv",
+      "google tv",
+      "remote",
+      "androidtv",
+      "multimedia"
+    ],
+    "licenseInformation": {
+      "license": "MIT",
+      "type": "free"
+    },
+    "extIcon": "https://raw.githubusercontent.com/backfisch88/ioBroker.androidtvremote/main/admin/androidtvremote.png",
+    "readme": "https://github.com/backfisch88/ioBroker.androidtvremote/blob/main/README.md",
+    "loglevel": "info",
+    "tier": 3,
+    "type": "multimedia",
+    "news": {
+      "0.2.9": {
+        "en": "Fixed Cast polling getting stuck after unresponsive requests. Added timeouts and automatic connection recovery.",
+        "de": "Behoben: Cast- und Medieninformationen konnten nach ausbleibenden Antworten dauerhaft einfrieren. Timeouts und automatische Wiederverbindung ergänzt."
+      },
+      "0.2.8": {
+        "en": "Maintenance release with updated GitHub Actions checks and Dependabot automerge configuration.",
+        "de": "Wartungsrelease mit aktualisierten GitHub-Actions-Prüfungen und Dependabot-Automerge-Konfiguration.",
+        "ru": "Технический выпуск с обновлёнными проверками GitHub Actions и настройкой автоматического слияния Dependabot.",
+        "pt": "Versão de manutenção com verificações do GitHub Actions e configuração de fusão automática do Dependabot atualizadas.",
+        "nl": "Onderhoudsrelease met bijgewerkte GitHub Actions-controles en Dependabot-automergeconfiguratie.",
+        "fr": "Version de maintenance avec vérifications GitHub Actions et configuration de fusion automatique Dependabot mises à jour.",
+        "it": "Versione di manutenzione con controlli GitHub Actions e configurazione di unione automatica Dependabot aggiornati.",
+        "es": "Versión de mantenimiento con comprobaciones de GitHub Actions y configuración de fusión automática de Dependabot actualizadas.",
+        "pl": "Wydanie konserwacyjne ze zaktualizowanymi testami GitHub Actions i konfiguracją automatycznego scalania Dependabot.",
+        "uk": "Технічний випуск з оновленими перевірками GitHub Actions і налаштуванням автоматичного злиття Dependabot.",
+        "zh-cn": "维护版本，更新了 GitHub Actions 检查和 Dependabot 自动合并配置。"
+      },
+      "0.2.7": {
+        "en": "Added automated GitHub Actions release workflow for GitHub and npm publishing.",
+        "de": "Automatischen GitHub-Actions-Release-Workflow für Veröffentlichungen auf GitHub und npm eingerichtet.",
+        "ru": "Добавлен автоматизированный процесс публикации на GitHub и npm через GitHub Actions.",
+        "pt": "Adicionado um fluxo automatizado do GitHub Actions para publicação no GitHub e npm.",
+        "nl": "Geautomatiseerde GitHub Actions-workflow toegevoegd voor publicatie op GitHub en npm.",
+        "fr": "Ajout d'un workflow GitHub Actions automatisé pour la publication sur GitHub et npm.",
+        "it": "Aggiunto un workflow GitHub Actions automatizzato per la pubblicazione su GitHub e npm.",
+        "es": "Añadido un flujo de trabajo automatizado de GitHub Actions para publicar en GitHub y npm.",
+        "pl": "Dodano automatyczny proces GitHub Actions do publikowania w GitHub i npm.",
+        "uk": "Додано автоматизований процес GitHub Actions для публікації на GitHub і npm.",
+        "zh-cn": "新增用于发布到 GitHub 和 npm 的自动化 GitHub Actions 工作流程."
+      },
+      "0.2.6": {
+        "en": "Improved pairing credential persistence. Credentials are no longer deleted automatically on unpaired events.",
+        "de": "Verbesserte Speicherung der Pairing-Zugangsdaten. Bei Unpaired-Ereignissen werden Zertifikate nicht mehr automatisch gelöscht.",
+        "ru": "Улучшено сохранение данных сопряжения. Сертификаты больше не удаляются автоматически при потере сопряжения.",
+        "pt": "Melhorada a persistência das credenciais de emparelhamento. Os certificados deixam de ser eliminados automaticamente quando ocorre um evento de desemparelhamento.",
+        "nl": "Opslag van koppelgegevens verbeterd. Certificaten worden niet langer automatisch verwijderd bij ontkoppelingsgebeurtenissen.",
+        "fr": "Amélioration de la conservation des identifiants d'appairage. Les certificats ne sont plus supprimés automatiquement lors d'un événement de désappairage.",
+        "it": "Migliorata la conservazione delle credenziali di associazione. I certificati non vengono più eliminati automaticamente in caso di disassociazione.",
+        "es": "Mejorada la conservación de las credenciales de emparejamiento. Los certificados ya no se eliminan automáticamente al producirse una desvinculación.",
+        "pl": "Ulepszono przechowywanie danych parowania. Certyfikaty nie są już automatycznie usuwane podczas zdarzeń rozparowania.",
+        "uk": "Покращено збереження даних сполучення. Сертифікати більше не видаляються автоматично під час роз'єднання.",
+        "zh-cn": "改进配对凭据的持久化存储。发生取消配对事件时不再自动删除证书."
+      }
+    }
+  },
+  "native": {
+    "host": "",
+    "deviceName": "ioBroker",
+    "pairingPort": 6467,
+    "remotePort": 6466,
+    "reconnectSeconds": 15,
+    "debugProtocol": false,
+    "enableCast": true,
+    "castPollSeconds": 5
+  },
+  "objects": [],
+  "instanceObjects": []
 }
