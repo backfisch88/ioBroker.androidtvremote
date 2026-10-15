@@ -434,7 +434,9 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
         });
 
         remote.on('current_app', async app => {
-            if (this.lastPowered === false || this.stopping) return;
+            if (this.lastPowered === false || this.stopping) {
+                return;
+            }
             const appId =
                 typeof app === 'string'
                     ? app.trim()
@@ -625,7 +627,9 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
                 const browser = bonjour.find({ type: 'androidtvremote2', protocol: 'tcp' });
                 browser.on('up', service => {
                     for (const ip of service.addresses || []) {
-                        if (!/^\d+\.\d+\.\d+\.\d+$/.test(ip)) continue;
+                        if (!/^\d+\.\d+\.\d+\.\d+$/.test(ip)) {
+                            continue;
+                        }
                         devices.set(ip, {
                             name: service.name || ip,
                             ip,
@@ -636,16 +640,24 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
                 });
                 browser.on('error', error => this.log.warn(`Discovery: ${this.errorText(error)}`));
                 await new Promise(resolve => setTimeout(resolve, 8000));
-                if (this.stopping) return this.discoveryDevices;
+                if (this.stopping) {
+                    return this.discoveryDevices;
+                }
                 this.discoveryDevices = [...devices.values()].sort((a, b) => a.name.localeCompare(b.name));
                 await this.setStateAsync('info.discovery.devices', JSON.stringify(this.discoveryDevices), true);
                 this.log.info(`Discovery abgeschlossen: ${this.discoveryDevices.length} Gerät(e).`);
                 return this.discoveryDevices;
             } finally {
-                if (bonjour) bonjour.destroy();
-                if (this.discoveryBonjour === bonjour) this.discoveryBonjour = null;
+                if (bonjour) {
+                    bonjour.destroy();
+                }
+                if (this.discoveryBonjour === bonjour) {
+                    this.discoveryBonjour = null;
+                }
                 this.discoveryRunning = false;
-                if (!this.stopping) await this.setStateAsync('info.discovery.running', false, true);
+                if (!this.stopping) {
+                    await this.setStateAsync('info.discovery.running', false, true);
+                }
             }
         })();
         try {
@@ -666,7 +678,9 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
     }
 
     async onMessage(obj) {
-        if (!obj || !obj.callback) return;
+        if (!obj || !obj.callback) {
+            return;
+        }
         try {
             if (obj.command === 'getDiscoveryStatus') {
                 this.sendTo(obj.from, obj.command, this.getDiscoveryStatus(), obj.callback);
