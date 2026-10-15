@@ -142,6 +142,13 @@ If the initial connection fails or an established connection is lost, the adapte
     ### **WORK IN PROGRESS**
 -->
 
+### 0.2.9 (2026-10-15)
+
+- Fixed Cast polling becoming permanently stuck when requests do not respond
+- Added timeouts and automatic recovery of stalled Cast connections
+- Improved Cast error logging
+- No changes to Android TV Remote v2 pairing or remote-control functionality
+
 ### 0.2.8 (2026-10-09)
 
 - Updated GitHub Actions checks and Dependabot automerge configuration
