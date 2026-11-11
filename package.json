@@ -1,6 +1,6 @@
 {
   "name": "iobroker.androidtvremote",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "ioBroker adapter for Android TV / Google TV using the Android TV Remote v2 protocol",
   "author": {
     "name": "Henrik Schönhofen",
@@ -29,6 +29,7 @@
   "dependencies": {
     "@iobroker/adapter-core": "^3.4.3",
     "@kud/androidtv-remote": "^0.1.2",
+    "bonjour-service": "^1.4.4",
     "castv2-client": "^1.2.0"
   },
   "repository": {
@@ -44,7 +45,7 @@
     "check": "node --check main.js",
     "test:package": "node ./node_modules/@iobroker/testing/node_modules/mocha/bin/mocha.js test/package.test.js",
     "test:integration": "node ./node_modules/@iobroker/testing/node_modules/mocha/bin/mocha.js test/integration.test.js",
-    "test:unit": "node --check main.js",
+    "test:unit": "node ./node_modules/@iobroker/testing/node_modules/mocha/bin/mocha.js test/unit.test.js",
     "typecheck": "tsc",
     "release": "release-script",
     "dev:build": "adapter-dev build"
@@ -56,7 +57,7 @@
     "@alcalzone/release-script-plugin-manual-review": "^5.2.0",
     "@iobroker/adapter-dev": "^1.5.0",
     "@iobroker/eslint-config": "^2.3.4",
-    "@iobroker/testing": "^6.3.0",
+    "@iobroker/testing": "^6.3.2",
     "@tsconfig/node22": "^22.0.6",
     "@types/node": "^22.20.5",
     "typescript": "^5.9.3"

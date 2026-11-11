@@ -1,6 +1,6 @@
 {
-  "IP-Adresse / Hostname": "IP 地址 / 主机名",
-  "IP-Adresse oder Hostname des Android TV / Google TV": "Android TV / Google TV 的 IP 地址或主机名",
+  "IP-Adresse / Hostname (manuell)": "IP 地址 / 主机名（手动）",
+  "IP-Adresse manuell eingeben oder oben ein Gerät auswählen.": "手动输入 IP 地址，或在上方选择设备。",
   "Anzeigename beim Pairing": "配对时显示的名称",
   "Pairing-Port": "配对端口",
   "Remote-Port": "遥控端口",

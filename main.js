@@ -36,15 +36,15 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
 
     async onReady() {
         this.stopping = false;
-        await this.setStateAsync('info.connection', false, true);
         await this.ensureObjects();
+        await this.setStateAsync('info.connection', false, true);
         await this.clearPlaybackAndAppStates();
         this.subscribeStates('control.*');
-        // Einmal beim Start suchen, ohne die Verbindung zu blockieren.
-        void this.discoverDevices().catch(error => this.log.warn(`Start-Discovery: ${this.errorText(error)}`));
+        // Search once at startup without blocking the connection.
+        void this.discoverDevices().catch(error => this.log.warn(`Startup discovery failed: ${this.errorText(error)}`));
 
         if (!this.config.host || !String(this.config.host).trim()) {
-            this.log.info('Noch kein Android-TV-Gerät konfiguriert. Discovery ist verfügbar.');
+            this.log.info('No Android TV device configured yet. Discovery is available.');
             return;
         }
 
@@ -55,7 +55,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
         try {
             this.remoteModule = await import('@kud/androidtv-remote');
         } catch (error) {
-            this.log.error(`Android-TV-Remote-Bibliothek konnte nicht geladen werden: ${this.errorText(error)}`);
+            this.log.error(`Could not load the Android TV Remote library: ${this.errorText(error)}`);
             return;
         }
 
@@ -69,7 +69,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
                 name: 'Discover Android TV devices',
                 type: 'boolean',
                 role: 'button',
-                read: true,
+                read: false,
                 write: true,
                 def: false,
             },
@@ -88,14 +88,6 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
                 read: true,
                 write: false,
                 def: '[]',
-            },
-            'info.connection': {
-                name: 'Connected',
-                type: 'boolean',
-                role: 'indicator.connected',
-                read: true,
-                write: false,
-                def: false,
             },
             'info.lastRemoteReady': {
                 name: 'Last remote connection',
@@ -269,7 +261,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
                 name: 'Reconnect',
                 type: 'boolean',
                 role: 'button',
-                read: true,
+                read: false,
                 write: true,
                 def: false,
             },
@@ -277,11 +269,27 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
                 name: 'Forget pairing',
                 type: 'boolean',
                 role: 'button',
-                read: true,
+                read: false,
                 write: true,
                 def: false,
             },
         };
+
+        const channels = {
+            info: 'Information',
+            'info.cast': 'Google Cast',
+            'info.media': 'Media',
+            'info.volume': 'Volume',
+            'info.discovery': 'Device discovery',
+            control: 'Control',
+        };
+        for (const [id, name] of Object.entries(channels)) {
+            await this.setObjectNotExistsAsync(id, {
+                type: 'channel',
+                common: { name },
+                native: {},
+            });
+        }
 
         for (const [id, common] of Object.entries(defs)) {
             await this.setObjectNotExistsAsync(id, {
@@ -289,6 +297,13 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
                 common,
                 native: {},
             });
+        }
+
+        // Migration: buttons must not be readable (objects created by <= 0.3.0 had read: true).
+        for (const [id, common] of Object.entries(defs)) {
+            if (common.role === 'button') {
+                await this.extendObjectAsync(id, { common: { read: false } });
+            }
         }
     }
 
@@ -301,7 +316,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             }
         } catch (error) {
             if (error && error.code !== 'ENOENT') {
-                this.log.warn(`Pairing-Zertifikat konnte nicht gelesen werden: ${this.errorText(error)}`);
+                this.log.warn(`Could not read pairing certificate: ${this.errorText(error)}`);
             }
         }
         return null;
@@ -365,12 +380,12 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             this.remote = createAndroidRemote(String(this.config.host).trim(), options);
             this.attachRemoteEvents(this.remote);
 
-            this.log.info(`Verbinde mit Android TV ${this.config.host}:${options.remote_port} ...`);
+            this.log.info(`Connecting to Android TV ${this.config.host}:${options.remote_port} ...`);
             const started = await this.remote.start();
             if (!started) {
                 await this.setStateAsync('info.connection', false, true);
                 this.log.info(
-                    `Android TV derzeit nicht erreichbar – neuer Versuch in ${Math.max(5, Number(this.config.reconnectSeconds) || 15)} Sekunden.`,
+                    `Android TV currently unreachable - retrying in ${Math.max(5, Number(this.config.reconnectSeconds) || 15)} seconds.`,
                 );
                 if (this.remote) {
                     try {
@@ -385,7 +400,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
         } catch (error) {
             await this.setStateAsync('info.connection', false, true);
             await this.clearPlaybackAndAppStates();
-            this.log.warn(`Verbindung fehlgeschlagen: ${this.errorText(error)}`);
+            this.log.warn(`Connection failed: ${this.errorText(error)}`);
             this.scheduleReconnect();
         } finally {
             this.connecting = false;
@@ -397,7 +412,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             this.pairingRequested = true;
             await this.setStateAsync('info.pairingRequired', true, true);
             await this.setStateAsync('info.connection', false, true);
-            this.log.info('Pairing erforderlich: Code vom Fernseher in control.pairingCode eintragen.');
+            this.log.info('Pairing required: enter the code shown on the TV into control.pairingCode.');
         });
 
         remote.on('ready', async () => {
@@ -410,9 +425,9 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             try {
                 await this.saveCertificate(remote.getCertificate());
             } catch (error) {
-                this.log.warn(`Pairing-Zertifikat konnte nicht gespeichert werden: ${this.errorText(error)}`);
+                this.log.warn(`Could not save pairing certificate: ${this.errorText(error)}`);
             }
-            this.log.info('Android TV Remote verbunden.');
+            this.log.info('Android TV Remote connected.');
         });
 
         remote.on('powered', async powered => {
@@ -458,14 +473,13 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             await this.setStateAsync('info.pairingRequired', true, true);
             this.pairingRequested = true;
 
-            // Gespeicherte Credentials hier NICHT löschen.
-            // Ein temporärer Verbindungs-/Authentifizierungsfehler darf nicht
-            // dazu führen, dass ein funktionierendes Pairing dauerhaft
-            // verloren geht. Credentials werden ausschließlich über
-            // control.forgetPairing bewusst gelöscht.
+            // Do NOT delete the stored credentials here.
+            // A temporary connection/authentication error must not cause a
+            // working pairing to be lost permanently. Credentials are only
+            // deleted deliberately via control.forgetPairing.
             this.log.warn(
-                'Android TV meldet "unpaired". Gespeichertes Pairing bleibt erhalten. ' +
-                    'Falls ein neues Pairing wirklich erforderlich ist, control.forgetPairing verwenden.',
+                'Android TV reported "unpaired". The stored pairing is kept. ' +
+                    'If a new pairing is really required, use control.forgetPairing.',
             );
         });
 
@@ -475,7 +489,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             }
             await this.setStateAsync('info.connection', false, true);
             await this.clearPlaybackAndAppStates();
-            this.log.warn(`Android-TV-Protokollfehler: ${this.errorText(error)}`);
+            this.log.warn(`Android TV protocol error: ${this.errorText(error)}`);
             this.scheduleReconnect();
         });
     }
@@ -514,7 +528,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
                     await this.setStateAsync(rel, false, true);
                     if (state.val === true) {
                         void this.discoverDevices().catch(error => {
-                            this.log.warn(`Discovery fehlgeschlagen: ${this.errorText(error)}`);
+                            this.log.warn(`Discovery failed: ${this.errorText(error)}`);
                         });
                     }
                     break;
@@ -526,11 +540,11 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
                         return;
                     }
                     if (!this.remote || !this.pairingRequested) {
-                        this.log.warn('Aktuell wartet der Adapter auf keinen Pairing-Code.');
+                        this.log.warn('The adapter is currently not waiting for a pairing code.');
                     } else {
                         const accepted = this.remote.sendCode(code);
                         if (!accepted) {
-                            this.log.warn('Pairing-Code konnte nicht gesendet werden.');
+                            this.log.warn('Could not send the pairing code.');
                         }
                     }
                     await this.setStateAsync(rel, '', true);
@@ -597,13 +611,13 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
                     }
                     await this.setStateAsync('info.connection', false, true);
                     await this.setStateAsync('info.pairingRequired', false, true);
-                    this.log.info('Gespeichertes Pairing wurde gelöscht. Neues Pairing wird gestartet.');
+                    this.log.info('Stored pairing deleted. Starting a new pairing.');
                     await this.connect();
                     break;
                 }
             }
         } catch (error) {
-            this.log.error(`Befehl ${rel} fehlgeschlagen: ${this.errorText(error)}`);
+            this.log.error(`Command ${rel} failed: ${this.errorText(error)}`);
         }
     }
 
@@ -620,7 +634,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             const devices = new Map();
             try {
                 await this.setStateAsync('info.discovery.running', true, true);
-                this.log.info('Discovery gestartet ...');
+                this.log.info('Discovery started ...');
                 const { Bonjour } = require('bonjour-service');
                 bonjour = new Bonjour();
                 this.discoveryBonjour = bonjour;
@@ -639,13 +653,13 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
                     }
                 });
                 browser.on('error', error => this.log.warn(`Discovery: ${this.errorText(error)}`));
-                await new Promise(resolve => setTimeout(resolve, 8000));
+                await new Promise(resolve => this.setTimeout(resolve, 8000));
                 if (this.stopping) {
                     return this.discoveryDevices;
                 }
                 this.discoveryDevices = [...devices.values()].sort((a, b) => a.name.localeCompare(b.name));
                 await this.setStateAsync('info.discovery.devices', JSON.stringify(this.discoveryDevices), true);
-                this.log.info(`Discovery abgeschlossen: ${this.discoveryDevices.length} Gerät(e).`);
+                this.log.info(`Discovery finished: ${this.discoveryDevices.length} device(s).`);
                 return this.discoveryDevices;
             } finally {
                 if (bonjour) {
@@ -688,11 +702,11 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
                 void this.discoverDevices().catch(error => this.log.warn(`Discovery: ${this.errorText(error)}`));
                 this.sendTo(obj.from, obj.command, this.getDiscoveryStatus(), obj.callback);
             } else if (obj.command === 'discoverAdminDevices') {
-                // Rückwärtskompatibilität: keine erneute Netzwerksuche beim Öffnen der Admin-Seite.
+                // Backwards compatibility: no new network search when opening the admin page.
                 this.sendTo(obj.from, obj.command, this.getDiscoveryStatus().devices, obj.callback);
             }
         } catch (error) {
-            this.log.warn(`Admin-Discovery: ${this.errorText(error)}`);
+            this.log.warn(`Admin discovery: ${this.errorText(error)}`);
             this.sendTo(obj.from, obj.command, { error: this.errorText(error) }, obj.callback);
         }
     }
@@ -755,7 +769,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             return known[id];
         }
 
-        // Lesbarer Fallback, Paket-ID bleibt zusätzlich in currentAppUnknown erhalten.
+        // Readable fallback; the package ID is still kept in currentAppUnknown.
         const parts = id.split('.').filter(Boolean);
         const raw = parts.length ? parts[parts.length - 1] : id;
         return raw.replace(/[_-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
@@ -789,25 +803,6 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             this.castClient = null;
             this.castPlayer = null;
         }
-    }
-
-    castWithTimeout(promise, operation, timeoutMs = 10000) {
-        return new Promise((resolve, reject) => {
-            const timer = setTimeout(() => {
-                reject(new Error(`Cast timeout: ${operation} (${timeoutMs} ms)`));
-            }, timeoutMs);
-
-            Promise.resolve(promise).then(
-                result => {
-                    clearTimeout(timer);
-                    resolve(result);
-                },
-                error => {
-                    clearTimeout(timer);
-                    reject(error);
-                },
-            );
-        });
     }
 
     resetCastConnection() {
@@ -863,7 +858,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             await this.setStateAsync('info.cast.connection', false, true);
             this.castPlayer = null;
             if (this.config.debugProtocol) {
-                this.log.debug(`Cast-Abfrage: ${this.errorText(error)}`);
+                this.log.debug(`Cast query: ${this.errorText(error)}`);
             }
             if (this.castClient) {
                 try {
@@ -996,7 +991,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             : aliases[normalized] || `KEYCODE_${normalized}`;
         const code = RemoteKeyCode[enumName];
         if (code === undefined) {
-            this.log.warn(`Unbekannte Remote-Taste: ${input} (${enumName})`);
+            this.log.warn(`Unknown remote key: ${input} (${enumName})`);
             return;
         }
         this.remote.sendKey(code);
@@ -1004,7 +999,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
 
     requireRemote() {
         if (!this.remote) {
-            this.log.warn('Android TV ist nicht verbunden.');
+            this.log.warn('Android TV is not connected.');
             return false;
         }
         return true;

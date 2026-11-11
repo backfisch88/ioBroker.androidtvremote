@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "androidtvremote",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "titleLang": {
       "en": "Android TV Remote",
       "de": "Android TV Remote",
@@ -70,9 +70,44 @@
     "tier": 3,
     "type": "multimedia",
     "news": {
+      "0.3.1": {
+        "en": "Fixed missing bonjour-service dependency. Logs are now in English. Added channel objects and info.connection object. Buttons are no longer readable. Added debug option to the configuration. Completed translations.",
+        "de": "Fehlende Abhängigkeit bonjour-service ergänzt. Logmeldungen jetzt auf Englisch. Channel-Objekte und info.connection-Objekt ergänzt. Buttons sind nicht mehr lesbar. Debug-Option in der Konfiguration ergänzt. Übersetzungen vervollständigt.",
+        "ru": "Добавлена отсутствующая зависимость bonjour-service. Сообщения журнала теперь на английском. Добавлены объекты каналов и info.connection. Кнопки больше не читаются. В настройки добавлена опция отладки. Дополнены переводы.",
+        "pt": "Adicionada a dependência em falta bonjour-service. Os registos estão agora em inglês. Adicionados objetos de canal e info.connection. Os botões já não são legíveis. Adicionada opção de depuração à configuração. Traduções completadas.",
+        "nl": "Ontbrekende afhankelijkheid bonjour-service toegevoegd. Logberichten zijn nu in het Engels. Kanaalobjecten en info.connection-object toegevoegd. Knoppen zijn niet langer leesbaar. Debugoptie aan de configuratie toegevoegd. Vertalingen aangevuld.",
+        "fr": "Ajout de la dépendance manquante bonjour-service. Les journaux sont désormais en anglais. Ajout des objets canal et info.connection. Les boutons ne sont plus lisibles. Ajout d'une option de débogage dans la configuration. Traductions complétées.",
+        "it": "Aggiunta la dipendenza mancante bonjour-service. I log sono ora in inglese. Aggiunti gli oggetti canale e info.connection. I pulsanti non sono più leggibili. Aggiunta opzione di debug alla configurazione. Traduzioni completate.",
+        "es": "Añadida la dependencia que faltaba bonjour-service. Los registros ahora están en inglés. Añadidos objetos de canal e info.connection. Los botones ya no son legibles. Añadida opción de depuración a la configuración. Traducciones completadas.",
+        "pl": "Dodano brakującą zależność bonjour-service. Komunikaty dziennika są teraz po angielsku. Dodano obiekty kanałów i info.connection. Przyciski nie są już odczytywalne. Dodano opcję debugowania w konfiguracji. Uzupełniono tłumaczenia.",
+        "uk": "Додано відсутню залежність bonjour-service. Повідомлення журналу тепер англійською. Додано об'єкти каналів та info.connection. Кнопки більше не читаються. До налаштувань додано опцію налагодження. Доповнено переклади.",
+        "zh-cn": "补充缺失的依赖 bonjour-service。日志现为英文。新增通道对象和 info.connection 对象。按钮不再可读。配置中新增调试选项。补全翻译。"
+      },
+      "0.3.0": {
+        "en": "Added device discovery with device selection in the configuration. Media, Cast and app states are cleared when the TV is powered off.",
+        "de": "Geräteerkennung mit Geräteauswahl in der Konfiguration ergänzt. Medien-, Cast- und App-Zustände werden beim Ausschalten des Fernsehers geleert.",
+        "ru": "Добавлено обнаружение устройств с выбором в настройках. Состояния медиа, Cast и приложений очищаются при выключении телевизора.",
+        "pt": "Adicionada deteção de dispositivos com seleção na configuração. Os estados de multimédia, Cast e aplicação são limpos quando a TV é desligada.",
+        "nl": "Apparaatdetectie met apparaatselectie in de configuratie toegevoegd. Media-, Cast- en app-statussen worden gewist wanneer de tv wordt uitgeschakeld.",
+        "fr": "Ajout de la détection d'appareils avec sélection dans la configuration. Les états média, Cast et application sont effacés à l'extinction du téléviseur.",
+        "it": "Aggiunto il rilevamento dei dispositivi con selezione nella configurazione. Gli stati multimediali, Cast e app vengono azzerati allo spegnimento della TV.",
+        "es": "Añadida la detección de dispositivos con selección en la configuración. Los estados de medios, Cast y aplicación se borran al apagar el televisor.",
+        "pl": "Dodano wykrywanie urządzeń z wyborem w konfiguracji. Stany multimediów, Cast i aplikacji są czyszczone po wyłączeniu telewizora.",
+        "uk": "Додано виявлення пристроїв з вибором у налаштуваннях. Стани медіа, Cast і застосунків очищаються під час вимкнення телевізора.",
+        "zh-cn": "新增设备发现及配置中的设备选择。电视关闭时清除媒体、Cast 和应用状态。"
+      },
       "0.2.9": {
         "en": "Fixed Cast polling getting stuck after unresponsive requests. Added timeouts and automatic connection recovery.",
-        "de": "Behoben: Cast- und Medieninformationen konnten nach ausbleibenden Antworten dauerhaft einfrieren. Timeouts und automatische Wiederverbindung ergänzt."
+        "de": "Behoben: Cast- und Medieninformationen konnten nach ausbleibenden Antworten dauerhaft einfrieren. Timeouts und automatische Wiederverbindung ergänzt.",
+        "ru": "Исправлено зависание опроса Cast после отсутствия ответа. Добавлены тайм-ауты и автоматическое восстановление соединения.",
+        "pt": "Corrigido o bloqueio da consulta Cast após pedidos sem resposta. Adicionados limites de tempo e recuperação automática da ligação.",
+        "nl": "Opgelost: Cast-polling bleef hangen na niet-reagerende verzoeken. Time-outs en automatisch herstel van de verbinding toegevoegd.",
+        "fr": "Correction du blocage de l'interrogation Cast après des requêtes sans réponse. Ajout de délais d'attente et de la reconnexion automatique.",
+        "it": "Corretto il blocco del polling Cast dopo richieste senza risposta. Aggiunti timeout e ripristino automatico della connessione.",
+        "es": "Corregido el bloqueo de la consulta Cast tras solicitudes sin respuesta. Añadidos tiempos de espera y recuperación automática de la conexión.",
+        "pl": "Naprawiono zawieszanie się odpytywania Cast po braku odpowiedzi. Dodano limity czasu i automatyczne odzyskiwanie połączenia.",
+        "uk": "Виправлено зависання опитування Cast після запитів без відповіді. Додано тайм-аути та автоматичне відновлення з'єднання.",
+        "zh-cn": "修复 Cast 轮询在请求无响应后卡住的问题。新增超时和自动连接恢复。"
       },
       "0.2.8": {
         "en": "Maintenance release with updated GitHub Actions checks and Dependabot automerge configuration.",
@@ -126,5 +161,27 @@
     "castPollSeconds": 5
   },
   "objects": [],
-  "instanceObjects": []
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "Connected",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    }
+  ]
 }

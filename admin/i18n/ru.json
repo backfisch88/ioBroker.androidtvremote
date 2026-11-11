@@ -1,6 +1,6 @@
 {
-  "IP-Adresse / Hostname": "IP-адрес / Имя хоста",
-  "IP-Adresse oder Hostname des Android TV / Google TV": "IP-адрес или имя хоста Android TV / Google TV",
+  "IP-Adresse / Hostname (manuell)": "IP-адрес / имя хоста (вручную)",
+  "IP-Adresse manuell eingeben oder oben ein Gerät auswählen.": "Введите IP-адрес вручную или выберите устройство выше.",
   "Anzeigename beim Pairing": "Отображаемое имя при сопряжении",
   "Pairing-Port": "Порт сопряжения",
   "Remote-Port": "Порт удалённого управления",

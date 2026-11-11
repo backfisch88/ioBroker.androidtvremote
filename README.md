@@ -7,6 +7,8 @@
 
 Unofficial Android TV / Google TV remote control adapter for ioBroker using the Android TV Remote v2 protocol.
 
+Supported devices: [Android TV / Google TV](https://www.android.com/tv/).
+
 The adapter maintains a persistent connection to an Android TV or Google TV device and provides remote control, power state, volume information, currently active application and optional Google Cast media metadata.
 
 ## Features
@@ -29,6 +31,7 @@ The adapter maintains a persistent connection to an Android TV or Google TV devi
 - Manual reconnect
 - Pairing reset
 - Optional Google Cast session and media metadata
+- Automatic device discovery (Bonjour/mDNS) in the adapter configuration
 
 ## Requirements
 
@@ -48,7 +51,9 @@ Default Android TV Remote v2 ports:
 
 Install the adapter in ioBroker and create an instance.
 
-Enter the IP address or hostname of the Android TV / Google TV device in the adapter configuration.
+Select a discovered device in the adapter configuration or enter its IP address or hostname manually.
+
+The network is searched once when the adapter starts and again when you press "Search" in the configuration. The IP address / hostname field stays editable after selecting a device.
 
 ## Pairing
 
@@ -87,9 +92,12 @@ To remove the stored pairing information and pair again, trigger:
     info.currentAppId
     info.currentApp
     info.currentAppUnknown
+    info.lastRemoteReady
     info.volume.level
     info.volume.maximum
     info.volume.muted
+    info.discovery.running
+    info.discovery.devices
 
 `info.currentAppId` contains the original Android package name.
 
@@ -106,6 +114,7 @@ Unknown package names are additionally written to `info.currentAppUnknown` so th
     control.power
     control.reconnect
     control.forgetPairing
+    control.discover
 
 ### Google Cast
 
@@ -135,12 +144,24 @@ Protocol ping requests are handled by the underlying Remote v2 library.
 
 If the initial connection fails or an established connection is lost, the adapter retries the connection using the configured reconnect interval.
 
+If the device reports "unpaired", the stored pairing is kept and no automatic reconnect is attempted. Trigger `control.reconnect` to try again, or `control.forgetPairing` to pair anew.
+
 ## Changelog
 
 <!--
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
+### 0.3.1 (2026-11-11)
+
+- Fixed: added missing `bonjour-service` dependency.
+- Changed: log messages are now in English.
+- Added: channel objects and `info.connection` instance object.
+- Fixed: buttons are no longer readable (migrated on start).
+- Added: protocol debug option in the configuration, completed translations and news.
+- Fixed: discovery timer is now cleaned up on unload.
+- Changed: removed CHANGELOG.md (changelog lives in README.md), Dependabot now covers src-admin and ignores major @types/node updates, updated @iobroker/testing.
 
 ### 0.3.0 (2026-10-15)
 
