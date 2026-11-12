@@ -71,17 +71,17 @@
     "type": "multimedia",
     "news": {
       "0.3.1": {
-        "en": "Fixed missing bonjour-service dependency. Logs are now in English. Added channel objects and info.connection object. Buttons are no longer readable. Added debug option to the configuration. Completed translations.",
-        "de": "Fehlende Abhängigkeit bonjour-service ergänzt. Logmeldungen jetzt auf Englisch. Channel-Objekte und info.connection-Objekt ergänzt. Buttons sind nicht mehr lesbar. Debug-Option in der Konfiguration ergänzt. Übersetzungen vervollständigt.",
-        "ru": "Добавлена отсутствующая зависимость bonjour-service. Сообщения журнала теперь на английском. Добавлены объекты каналов и info.connection. Кнопки больше не читаются. В настройки добавлена опция отладки. Дополнены переводы.",
-        "pt": "Adicionada a dependência em falta bonjour-service. Os registos estão agora em inglês. Adicionados objetos de canal e info.connection. Os botões já não são legíveis. Adicionada opção de depuração à configuração. Traduções completadas.",
-        "nl": "Ontbrekende afhankelijkheid bonjour-service toegevoegd. Logberichten zijn nu in het Engels. Kanaalobjecten en info.connection-object toegevoegd. Knoppen zijn niet langer leesbaar. Debugoptie aan de configuratie toegevoegd. Vertalingen aangevuld.",
-        "fr": "Ajout de la dépendance manquante bonjour-service. Les journaux sont désormais en anglais. Ajout des objets canal et info.connection. Les boutons ne sont plus lisibles. Ajout d'une option de débogage dans la configuration. Traductions complétées.",
-        "it": "Aggiunta la dipendenza mancante bonjour-service. I log sono ora in inglese. Aggiunti gli oggetti canale e info.connection. I pulsanti non sono più leggibili. Aggiunta opzione di debug alla configurazione. Traduzioni completate.",
-        "es": "Añadida la dependencia que faltaba bonjour-service. Los registros ahora están en inglés. Añadidos objetos de canal e info.connection. Los botones ya no son legibles. Añadida opción de depuración a la configuración. Traducciones completadas.",
-        "pl": "Dodano brakującą zależność bonjour-service. Komunikaty dziennika są teraz po angielsku. Dodano obiekty kanałów i info.connection. Przyciski nie są już odczytywalne. Dodano opcję debugowania w konfiguracji. Uzupełniono tłumaczenia.",
-        "uk": "Додано відсутню залежність bonjour-service. Повідомлення журналу тепер англійською. Додано об'єкти каналів та info.connection. Кнопки більше не читаються. До налаштувань додано опцію налагодження. Доповнено переклади.",
-        "zh-cn": "补充缺失的依赖 bonjour-service。日志现为英文。新增通道对象和 info.connection 对象。按钮不再可读。配置中新增调试选项。补全翻译。"
+        "en": "Fixed missing dependency and Cast polling stalls. English logs. Added channel objects and debug option. Security updates.",
+        "de": "Fehlende Abhängigkeit und hängendes Cast-Polling behoben. Englische Logs. Channel-Objekte und Debug-Option ergänzt. Sicherheits-Updates.",
+        "ru": "Исправлены отсутствующая зависимость и зависание опроса Cast. Логи на английском. Добавлены объекты каналов и опция отладки. Обновления безопасности.",
+        "pt": "Corrigidos dependência em falta e bloqueio da consulta Cast. Registos em inglês. Adicionados objetos de canal e opção de depuração. Atualizações de segurança.",
+        "nl": "Ontbrekende afhankelijkheid en vastlopende Cast-polling opgelost. Engelse logs. Kanaalobjecten en debugoptie toegevoegd. Beveiligingsupdates.",
+        "fr": "Correction d'une dépendance manquante et du blocage de l'interrogation Cast. Journaux en anglais. Ajout d'objets canal et d'une option de débogage. Mises à jour de sécurité.",
+        "it": "Corretti dipendenza mancante e blocco del polling Cast. Log in inglese. Aggiunti oggetti canale e opzione di debug. Aggiornamenti di sicurezza.",
+        "es": "Corregidos dependencia faltante y bloqueo de la consulta Cast. Registros en inglés. Añadidos objetos de canal y opción de depuración. Actualizaciones de seguridad.",
+        "pl": "Naprawiono brakującą zależność i zawieszanie odpytywania Cast. Logi po angielsku. Dodano obiekty kanałów i opcję debugowania. Aktualizacje bezpieczeństwa.",
+        "uk": "Виправлено відсутню залежність і зависання опитування Cast. Журнал англійською. Додано об'єкти каналів і опцію налагодження. Оновлення безпеки.",
+        "zh-cn": "修复缺失依赖和 Cast 轮询卡住的问题。日志改为英文。新增通道对象和调试选项。安全更新。"
       },
       "0.3.0": {
         "en": "Added device discovery with device selection in the configuration. Media, Cast and app states are cleared when the TV is powered off.",

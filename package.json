@@ -41,11 +41,11 @@
   },
   "scripts": {
     "test": "npm run test:package && npm run test:unit",
-    "lint": "eslint main.js",
+    "lint": "eslint main.js test/",
     "check": "node --check main.js",
-    "test:package": "node ./node_modules/@iobroker/testing/node_modules/mocha/bin/mocha.js test/package.test.js",
-    "test:integration": "node ./node_modules/@iobroker/testing/node_modules/mocha/bin/mocha.js test/integration.test.js",
-    "test:unit": "node ./node_modules/@iobroker/testing/node_modules/mocha/bin/mocha.js test/unit.test.js",
+    "test:package": "mocha test/package.test.js --exit",
+    "test:integration": "mocha test/integration.test.js --exit",
+    "test:unit": "mocha test/unit.test.js test/cast.test.js test/protocol.test.js --exit",
     "typecheck": "tsc",
     "release": "release-script",
     "dev:build": "adapter-dev build"
@@ -60,6 +60,11 @@
     "@iobroker/testing": "^6.3.2",
     "@tsconfig/node22": "^22.0.6",
     "@types/node": "^22.20.5",
+    "mocha": "^12.0.3",
     "typescript": "^5.9.3"
+  },
+  "overrides": {
+    "node-forge": "^1.4.3",
+    "protobufjs": "^7.6.6"
   }
 }

@@ -23,7 +23,7 @@ function DeviceDiscovery(props: ConfigGenericProps): React.JSX.Element {
   const [status, setStatus] = useState<Status>({ running: false, devices: [] });
   const [reachable, setReachable] = useState(true);
   const busy = useRef(false);
-  const lang = (navigator.language || 'en').toLowerCase();
+  const lang = String(props.oContext.systemConfig?.language || navigator.language || 'en').toLowerCase();
   const locale = lang.startsWith('zh') ? 'zh-cn' : lang.split('-')[0];
   const tr = words[locale] || words.en;
   const instance = `${props.oContext.adapterName}.${props.oContext.instance}`;

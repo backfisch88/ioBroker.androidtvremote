@@ -116,6 +116,19 @@ Unknown package names are additionally written to `info.currentAppUnknown` so th
     control.forgetPairing
     control.discover
 
+| State | Usage |
+|-------|-------|
+| `control.pairingCode` | Pairing code shown on the TV |
+| `control.key` | Key name, e.g. `HOME`, `BACK`, `OK`, `UP`, `DOWN`, `LEFT`, `RIGHT`, `PLAY_PAUSE`, `VOLUME_UP`, `MUTE`, or any Android `KEYCODE_...` name |
+| `control.text` | Text to type into the focused input field |
+| `control.appLink` | App link or URL to open on the TV |
+| `control.power` | `true` / `false` to switch the TV on or off (sent only if the state differs) |
+| `control.reconnect` | Button: reconnect now |
+| `control.forgetPairing` | Button: delete the stored pairing and pair again |
+| `control.discover` | Button: search the network for devices |
+
+Commands are acknowledged after they were handled. Without a connection, `control.power` shows the last known power state.
+
 ### Google Cast
 
 When Cast monitoring is enabled:
@@ -133,6 +146,8 @@ When Cast monitoring is enabled:
 Android TV Remote v2 itself provides information about the currently active Android application, but does not expose complete media metadata for every native Android TV application.
 
 The optional Cast integration can provide title, subtitle and playback state when an active Google Cast receiver session exposes this information.
+
+Media, Cast and application states are cleared when the TV is switched off.
 
 Therefore, media metadata may not be available for applications that are running natively on the Android TV device.
 
@@ -153,15 +168,14 @@ If the device reports "unpaired", the stored pairing is kept and no automatic re
     ### **WORK IN PROGRESS**
 -->
 
-### 0.3.1 (2026-11-11)
+### 0.3.1 (2026-11-12)
 
-- Fixed: added missing `bonjour-service` dependency.
-- Changed: log messages are now in English.
-- Added: channel objects and `info.connection` instance object.
-- Fixed: buttons are no longer readable (migrated on start).
-- Added: protocol debug option in the configuration, completed translations and news.
-- Fixed: discovery timer is now cleaned up on unload.
-- Changed: removed CHANGELOG.md (changelog lives in README.md), Dependabot now covers src-admin and ignores major @types/node updates, updated @iobroker/testing.
+- Fixed: missing `bonjour-service` dependency
+- Fixed: Cast polling can no longer stall, Cast player is reused per session
+- Fixed: buttons are not readable anymore, `control.power` without connection
+- Fixed: security advisories in dependencies
+- Changed: log messages, app names and `media.mute` role are now standard/English
+- Added: channel objects, `info.connection` instance object, debug option in config
 
 ### 0.3.0 (2026-10-15)
 

@@ -5,6 +5,23 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client: CastClient, DefaultMediaReceiver } = require('castv2-client');
 
+// A Cast query that takes longer than this is considered stalled (normal polls take well under a second).
+const CAST_STALL_MS = 60000;
+
+/**
+ * Convert a configuration value to an integer within the given bounds.
+ *
+ * @param {unknown} value configured value
+ * @param {number} fallback used when the value is missing or not a finite number
+ * @param {number} min lower bound
+ * @param {number} max upper bound
+ */
+function clampInt(value, fallback, min, max) {
+    const num = Number(value);
+    const result = Number.isFinite(num) && num !== 0 ? Math.round(num) : fallback;
+    return Math.min(max, Math.max(min, result));
+}
+
 class AndroidTvRemoteAdapter extends utils.Adapter {
     constructor(options = {}) {
         super({ ...options, name: 'androidtvremote' });
@@ -20,9 +37,12 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
         this.credentialsFile = '';
         this.lastPowered = null;
         this.castClient = null;
-        this.castPlayer = null;
         this.castTimer = null;
+        this.castPlayer = null;
+        this.castPlayerSessionId = '';
         this.castConnecting = false;
+        this.castPollStarted = 0;
+        this.castPollToken = 0;
         this.discoveryRunning = false;
         this.discoveryBonjour = null;
         this.discoveryPromise = null;
@@ -212,7 +232,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             'info.volume.muted': {
                 name: 'Muted',
                 type: 'boolean',
-                role: 'indicator.mute',
+                role: 'media.mute',
                 read: true,
                 write: false,
                 def: false,
@@ -305,6 +325,8 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
                 await this.extendObjectAsync(id, { common: { read: false } });
             }
         }
+        // Migration: role of the mute state changed from indicator.mute to media.mute in 0.3.1.
+        await this.extendObjectAsync('info.volume.muted', { common: { role: 'media.mute' } });
     }
 
     async loadCertificate() {
@@ -367,8 +389,8 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
 
             const cert = await this.loadCertificate();
             const options = {
-                pairing_port: Number(this.config.pairingPort) || 6467,
-                remote_port: Number(this.config.remotePort) || 6466,
+                pairing_port: clampInt(this.config.pairingPort, 6467, 1, 65535),
+                remote_port: clampInt(this.config.remotePort, 6466, 1, 65535),
                 service_name: String(this.config.deviceName || 'ioBroker'),
                 debug: !!this.config.debugProtocol,
             };
@@ -384,9 +406,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             const started = await this.remote.start();
             if (!started) {
                 await this.setStateAsync('info.connection', false, true);
-                this.log.info(
-                    `Android TV currently unreachable - retrying in ${Math.max(5, Number(this.config.reconnectSeconds) || 15)} seconds.`,
-                );
+                this.log.info(`Android TV currently unreachable - retrying in ${this.reconnectSeconds()} seconds.`);
                 if (this.remote) {
                     try {
                         this.remote.stop();
@@ -408,14 +428,25 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
     }
 
     attachRemoteEvents(remote) {
-        remote.on('secret', async () => {
+        // Wrap handlers so that a failing state write never becomes an unhandled promise rejection.
+        const on = (event, handler) =>
+            remote.on(event, async (...args) => {
+                try {
+                    await handler(...args);
+                } catch (error) {
+                    if (!this.stopping) {
+                        this.log.warn(`Remote event "${event}" failed: ${this.errorText(error)}`);
+                    }
+                }
+            });
+        on('secret', async () => {
             this.pairingRequested = true;
             await this.setStateAsync('info.pairingRequired', true, true);
             await this.setStateAsync('info.connection', false, true);
             this.log.info('Pairing required: enter the code shown on the TV into control.pairingCode.');
         });
 
-        remote.on('ready', async () => {
+        on('ready', async () => {
             this.lastPowered = null;
             this.pairingRequested = false;
             await this.setStateAsync('info.pairingRequired', false, true);
@@ -430,7 +461,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             this.log.info('Android TV Remote connected.');
         });
 
-        remote.on('powered', async powered => {
+        on('powered', async powered => {
             this.lastPowered = !!powered;
             await this.setStateAsync('info.powered', !!powered, true);
             await this.setStateAsync('control.power', !!powered, true);
@@ -439,7 +470,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             }
         });
 
-        remote.on('volume', async volume => {
+        on('volume', async volume => {
             if (!volume) {
                 return;
             }
@@ -448,7 +479,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             await this.setStateAsync('info.volume.muted', !!volume.muted, true);
         });
 
-        remote.on('current_app', async app => {
+        on('current_app', async app => {
             if (this.lastPowered === false || this.stopping) {
                 return;
             }
@@ -467,7 +498,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             await this.setStateAsync('info.currentAppUnknown', mapped ? '' : appId, true);
         });
 
-        remote.on('unpaired', async () => {
+        on('unpaired', async () => {
             await this.setStateAsync('info.connection', false, true);
             await this.clearPlaybackAndAppStates();
             await this.setStateAsync('info.pairingRequired', true, true);
@@ -483,7 +514,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             );
         });
 
-        remote.on('error', async error => {
+        on('error', async error => {
             if (this.stopping) {
                 return;
             }
@@ -494,11 +525,15 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
         });
     }
 
+    reconnectSeconds() {
+        return clampInt(this.config.reconnectSeconds, 15, 5, 3600);
+    }
+
     scheduleReconnect() {
         if (this.stopping || this.reconnectTimer || this.pairingRequested) {
             return;
         }
-        const seconds = Math.max(5, Number(this.config.reconnectSeconds) || 15);
+        const seconds = this.reconnectSeconds();
         this.reconnectTimer = this.setTimeout(() => {
             this.reconnectTimer = null;
             void this.connect();
@@ -584,8 +619,11 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
                         if (this.lastPowered === null || desired !== this.lastPowered) {
                             this.remote.sendPower();
                         }
+                        await this.setStateAsync(rel, desired, true);
+                    } else {
+                        // Nothing was sent: show the last known power state instead of the requested one.
+                        await this.setStateAsync(rel, !!this.lastPowered, true);
                     }
-                    await this.setStateAsync(rel, desired, true);
                     break;
                 }
 
@@ -701,9 +739,6 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             } else if (obj.command === 'startDiscovery') {
                 void this.discoverDevices().catch(error => this.log.warn(`Discovery: ${this.errorText(error)}`));
                 this.sendTo(obj.from, obj.command, this.getDiscoveryStatus(), obj.callback);
-            } else if (obj.command === 'discoverAdminDevices') {
-                // Backwards compatibility: no new network search when opening the admin page.
-                this.sendTo(obj.from, obj.command, this.getDiscoveryStatus().devices, obj.callback);
             }
         } catch (error) {
             this.log.warn(`Admin discovery: ${this.errorText(error)}`);
@@ -714,10 +749,10 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
     appNameMap() {
         return {
             // Launcher / System
-            'com.google.android.apps.tv.launcherx': 'Google TV Startbildschirm',
-            'com.google.android.tvlauncher': 'Android TV Startbildschirm',
-            'com.google.android.apps.tv.launcher': 'Android TV Startbildschirm',
-            'com.android.tv.settings': 'Einstellungen',
+            'com.google.android.apps.tv.launcherx': 'Google TV Home',
+            'com.google.android.tvlauncher': 'Android TV Home',
+            'com.google.android.apps.tv.launcher': 'Android TV Home',
+            'com.android.tv.settings': 'Settings',
             'com.android.vending': 'Google Play Store',
             'com.google.android.videos': 'Google TV',
 
@@ -733,7 +768,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             'de.rtli.tvnow': 'RTL+',
             'de.telekom.magentatv.tv': 'MagentaTV',
             'de.telekom.magentatv.mobile': 'MagentaTV',
-            'de.telekom.magentatv.atv': 'MagentaTV (1. Generation)',
+            'de.telekom.magentatv.atv': 'MagentaTV (1st generation)',
             'de.prosiebensat1digital.seventv': 'Joyn',
             'com.zattoo.player': 'Zattoo',
             'de.exaring.waipu': 'waipu.tv',
@@ -779,11 +814,19 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
         if (this.config.enableCast === false) {
             return;
         }
-        const interval = Math.max(3, Number(this.config.castPollSeconds) || 5);
+        const interval = clampInt(this.config.castPollSeconds, 5, 3, 60);
         const run = async () => {
-            if (!this.stopping) {
-                await this.pollCast();
+            if (this.stopping) {
+                return;
             }
+            // Watchdog: a request that never answers would otherwise block polling until restart.
+            if (this.castConnecting && Date.now() - this.castPollStarted > CAST_STALL_MS) {
+                this.log.warn('Cast query stalled, resetting the Cast connection.');
+                this.resetCastConnection();
+                this.castConnecting = false;
+                await this.setStateAsync('info.cast.connection', false, true);
+            }
+            await this.pollCast();
         };
         void run();
         this.castTimer = this.setInterval(run, interval * 1000);
@@ -801,14 +844,24 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
                 // Ignore cleanup errors.
             }
             this.castClient = null;
-            this.castPlayer = null;
         }
+        this.dropCastPlayer();
+    }
+
+    /**
+     * Forget the cached Cast player.
+     * Do NOT call player.close() / media.close(): castv2-client sends a STOP request to the media session on close.
+     * Dropping the reference is safe, because the player is only ever used together with its Cast client.
+     */
+    dropCastPlayer() {
+        this.castPlayer = null;
+        this.castPlayerSessionId = '';
     }
 
     resetCastConnection() {
         const client = this.castClient;
         this.castClient = null;
-        this.castPlayer = null;
+        this.dropCastPlayer();
 
         if (client) {
             try {
@@ -824,13 +877,17 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             return;
         }
         this.castConnecting = true;
+        this.castPollStarted = Date.now();
+        const token = ++this.castPollToken;
+        const stale = () => token !== this.castPollToken || this.lastPowered === false || this.stopping;
         try {
             await this.ensureCastConnected();
             const sessions = await this.castGetSessions();
-            if (this.lastPowered === false || this.stopping) {
+            if (stale()) {
                 return;
             }
             if (!Array.isArray(sessions) || sessions.length === 0) {
+                this.dropCastPlayer();
                 await this.clearMediaStates();
                 return;
             }
@@ -840,7 +897,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             await this.setStateAsync('info.cast.appName', String(session.displayName || ''), true);
 
             const status = await this.castJoinAndGetStatus(session);
-            if (this.lastPowered === false || this.stopping) {
+            if (stale()) {
                 return;
             }
             if (!status) {
@@ -855,8 +912,11 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             await this.setStateAsync('info.media.playerState', String(status.playerState || ''), true);
             await this.setStateAsync('info.media.contentId', String(media.contentId || ''), true);
         } catch (error) {
+            if (token !== this.castPollToken) {
+                return;
+            }
             await this.setStateAsync('info.cast.connection', false, true);
-            this.castPlayer = null;
+            this.dropCastPlayer();
             if (this.config.debugProtocol) {
                 this.log.debug(`Cast query: ${this.errorText(error)}`);
             }
@@ -869,7 +929,9 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
                 this.castClient = null;
             }
         } finally {
-            this.castConnecting = false;
+            if (token === this.castPollToken) {
+                this.castConnecting = false;
+            }
         }
     }
 
@@ -899,10 +961,21 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
                 }
                 settled = true;
                 client.removeListener('error', fail);
+                if (this.stopping || this.castClient) {
+                    // Late connection of an abandoned poll: discard it.
+                    try {
+                        client.close();
+                    } catch {
+                        // Ignore cleanup errors.
+                    }
+                    resolve();
+                    return;
+                }
                 client.on('error', () => {
                     void this.setStateAsync('info.cast.connection', false, true);
                     if (this.castClient === client) {
                         this.castClient = null;
+                        this.dropCastPlayer();
                     }
                 });
                 this.castClient = client;
@@ -920,17 +993,21 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
 
     castJoinAndGetStatus(session) {
         return new Promise((resolve, reject) => {
+            const ask = player =>
+                player.getStatus((statusErr, status) => (statusErr ? reject(statusErr) : resolve(status || null)));
+
+            // Join each Cast session only once: every join registers new listeners on the Cast connection.
+            if (this.castPlayer && session.sessionId && this.castPlayerSessionId === session.sessionId) {
+                ask(this.castPlayer);
+                return;
+            }
             this.castClient.join(session, DefaultMediaReceiver, (err, player) => {
                 if (err) {
                     return reject(err);
                 }
                 this.castPlayer = player;
-                player.getStatus((statusErr, status) => {
-                    if (statusErr) {
-                        return reject(statusErr);
-                    }
-                    resolve(status || null);
-                });
+                this.castPlayerSessionId = session.sessionId || '';
+                ask(player);
             });
         });
     }
