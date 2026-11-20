@@ -11,7 +11,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@iobroker/gui-components": "^10.4.6",
-    "@iobroker/json-config": "^10.1.17",
+    "@iobroker/json-config": "^10.1.22",
     "@module-federation/vite": "^1.23.11",
     "@mui/material": "^9.5.0",
     "@vitejs/plugin-react": "^6.3.0",
