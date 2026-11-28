@@ -159,7 +159,9 @@ Protocol ping requests are handled by the underlying Remote v2 library.
 
 If the initial connection fails or an established connection is lost, the adapter retries the connection using the configured reconnect interval.
 
-If the device reports "unpaired", the stored pairing is kept and no automatic reconnect is attempted. Trigger `control.reconnect` to try again, or `control.forgetPairing` to pair anew.
+`info.connection` (instance indicator) stays green as long as a pairing exists or a connection was established. A switched-off TV does not turn it yellow; the adapter keeps checking the TV and reconnects automatically as soon as it is reachable again. `info.powered` shows the power state. The instance is only yellow if there never was a connection (not paired yet).
+
+A single "unpaired" report from the device (the TV also sends it when it switches off) only triggers a reconnect. After 5 reports in a row the adapter stops reconnecting and sets `info.pairingRequired`. The stored pairing is always kept. Trigger `control.reconnect` to try again, or `control.forgetPairing` to pair anew.
 
 ## Changelog
 
@@ -167,6 +169,12 @@ If the device reports "unpaired", the stored pairing is kept and no automatic re
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
+### 0.3.2 (2026-11-28)
+
+- Fixed: instance turned yellow when the TV was switched off and sometimes did not reconnect when it came back
+- Changed: `info.connection` stays true while a pairing exists, TV off is no longer a connection error
+- Changed: a single "unpaired" report only triggers a reconnect
 
 ### 0.3.1 (2026-11-12)
 

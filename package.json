@@ -1,6 +1,6 @@
 {
   "name": "iobroker.androidtvremote",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "ioBroker adapter for Android TV / Google TV using the Android TV Remote v2 protocol",
   "author": {
     "name": "Henrik Schönhofen",
@@ -45,7 +45,7 @@
     "check": "node --check main.js",
     "test:package": "mocha test/package.test.js --exit",
     "test:integration": "mocha test/integration.test.js --exit",
-    "test:unit": "mocha test/unit.test.js test/cast.test.js test/protocol.test.js --exit",
+    "test:unit": "mocha test/unit.test.js test/cast.test.js test/connection.test.js test/protocol.test.js --exit",
     "typecheck": "tsc",
     "release": "release-script",
     "dev:build": "adapter-dev build"

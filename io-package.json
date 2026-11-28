@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "androidtvremote",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "titleLang": {
       "en": "Android TV Remote",
       "de": "Android TV Remote",
@@ -70,6 +70,19 @@
     "tier": 3,
     "type": "multimedia",
     "news": {
+      "0.3.2": {
+        "en": "Instance stays green while the TV is off and reconnects reliably when it is back.",
+        "de": "Instanz bleibt grün, solange der TV aus ist, und verbindet sich zuverlässig neu, sobald er wieder an ist.",
+        "ru": "Экземпляр остаётся зелёным, пока телевизор выключен, и надёжно переподключается при его включении.",
+        "pt": "A instância permanece verde enquanto a TV está desligada e volta a ligar-se de forma fiável quando é ligada.",
+        "nl": "Instantie blijft groen zolang de tv uit is en maakt betrouwbaar opnieuw verbinding zodra hij weer aan staat.",
+        "fr": "L'instance reste verte tant que le téléviseur est éteint et se reconnecte de façon fiable dès qu'il est rallumé.",
+        "it": "L'istanza resta verde mentre la TV è spenta e si riconnette in modo affidabile quando viene riaccesa.",
+        "es": "La instancia permanece en verde mientras el televisor está apagado y se reconecta de forma fiable cuando se enciende.",
+        "pl": "Instancja pozostaje zielona, gdy telewizor jest wyłączony, i niezawodnie łączy się ponownie po jego włączeniu.",
+        "uk": "Екземпляр залишається зеленим, поки телевізор вимкнений, і надійно перепідключається після його ввімкнення.",
+        "zh-cn": "电视关机时实例保持绿色，开机后可靠地自动重新连接。"
+      },
       "0.3.1": {
         "en": "Fixed missing dependency and Cast polling stalls. English logs. Added channel objects and debug option. Security updates.",
         "de": "Fehlende Abhängigkeit und hängendes Cast-Polling behoben. Englische Logs. Channel-Objekte und Debug-Option ergänzt. Sicherheits-Updates.",
@@ -134,19 +147,6 @@
         "pl": "Dodano automatyczny proces GitHub Actions do publikowania w GitHub i npm.",
         "uk": "Додано автоматизований процес GitHub Actions для публікації на GitHub і npm.",
         "zh-cn": "新增用于发布到 GitHub 和 npm 的自动化 GitHub Actions 工作流程."
-      },
-      "0.2.6": {
-        "en": "Improved pairing credential persistence. Credentials are no longer deleted automatically on unpaired events.",
-        "de": "Verbesserte Speicherung der Pairing-Zugangsdaten. Bei Unpaired-Ereignissen werden Zertifikate nicht mehr automatisch gelöscht.",
-        "ru": "Улучшено сохранение данных сопряжения. Сертификаты больше не удаляются автоматически при потере сопряжения.",
-        "pt": "Melhorada a persistência das credenciais de emparelhamento. Os certificados deixam de ser eliminados automaticamente quando ocorre um evento de desemparelhamento.",
-        "nl": "Opslag van koppelgegevens verbeterd. Certificaten worden niet langer automatisch verwijderd bij ontkoppelingsgebeurtenissen.",
-        "fr": "Amélioration de la conservation des identifiants d'appairage. Les certificats ne sont plus supprimés automatiquement lors d'un événement de désappairage.",
-        "it": "Migliorata la conservazione delle credenziali di associazione. I certificati non vengono più eliminati automaticamente in caso di disassociazione.",
-        "es": "Mejorada la conservación de las credenciales de emparejamiento. Los certificados ya no se eliminan automáticamente al producirse una desvinculación.",
-        "pl": "Ulepszono przechowywanie danych parowania. Certyfikaty nie są już automatycznie usuwane podczas zdarzeń rozparowania.",
-        "uk": "Покращено збереження даних сполучення. Сертифікати більше не видаляються автоматично під час роз'єднання.",
-        "zh-cn": "改进配对凭据的持久化存储。发生取消配对事件时不再自动删除证书."
       }
     }
   },

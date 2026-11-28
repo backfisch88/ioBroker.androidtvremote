@@ -2,11 +2,16 @@
 
 const utils = require('@iobroker/adapter-core');
 const fs = require('node:fs');
+const net = require('node:net');
 const path = require('node:path');
 const { Client: CastClient, DefaultMediaReceiver } = require('castv2-client');
 
 // A Cast query that takes longer than this is considered stalled (normal polls take well under a second).
 const CAST_STALL_MS = 60000;
+// Consecutive "unpaired" reports from the TV before the pairing is treated as really lost.
+const UNPAIRED_LIMIT = 5;
+// Consecutive failed reachability probes before the TV is considered switched off.
+const PROBE_FAIL_LIMIT = 2;
 
 /**
  * Convert a configuration value to an integer within the given bounds.
@@ -33,6 +38,12 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
         this.stopping = false;
         this.connecting = false;
         this.pairingRequested = false;
+        this.connectionState = null;
+        this.unpairedCount = 0;
+        this.unreachableLogged = false;
+        this.needsFreshConnect = false;
+        this.probeFailures = 0;
+        this.linkWatchTimer = null;
         this.dataDir = '';
         this.credentialsFile = '';
         this.lastPowered = null;
@@ -57,7 +68,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
     async onReady() {
         this.stopping = false;
         await this.ensureObjects();
-        await this.setStateAsync('info.connection', false, true);
+        await this.setConnected(false);
         await this.clearPlaybackAndAppStates();
         this.subscribeStates('control.*');
         // Search once at startup without blocking the connection.
@@ -79,8 +90,27 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             return;
         }
 
+        // A stored pairing means the TV was connected before: the instance stays green while the TV is switched off.
+        if (await this.loadCertificate()) {
+            await this.setConnected(true);
+        }
+
         await this.connect();
         this.startCastMonitor();
+        this.scheduleLinkWatch();
+    }
+
+    /**
+     * Write info.connection only when the value changes.
+     *
+     * @param {boolean} value new connection state
+     */
+    async setConnected(value) {
+        if (this.connectionState === value) {
+            return;
+        }
+        this.connectionState = value;
+        await this.setStateAsync('info.connection', value, true);
     }
 
     async ensureObjects() {
@@ -405,8 +435,13 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             this.log.info(`Connecting to Android TV ${this.config.host}:${options.remote_port} ...`);
             const started = await this.remote.start();
             if (!started) {
-                await this.setStateAsync('info.connection', false, true);
-                this.log.info(`Android TV currently unreachable - retrying in ${this.reconnectSeconds()} seconds.`);
+                // info.connection is left untouched: a TV that is switched off is not a connection error.
+                if (!this.unreachableLogged) {
+                    this.unreachableLogged = true;
+                    this.log.info(
+                        `Android TV currently unreachable - retrying every ${this.reconnectSeconds()} seconds.`,
+                    );
+                }
                 if (this.remote) {
                     try {
                         this.remote.stop();
@@ -418,7 +453,6 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
                 this.scheduleReconnect();
             }
         } catch (error) {
-            await this.setStateAsync('info.connection', false, true);
             await this.clearPlaybackAndAppStates();
             this.log.warn(`Connection failed: ${this.errorText(error)}`);
             this.scheduleReconnect();
@@ -431,6 +465,10 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
         // Wrap handlers so that a failing state write never becomes an unhandled promise rejection.
         const on = (event, handler) =>
             remote.on(event, async (...args) => {
+                // Events of a replaced or dropped remote must not change the state.
+                if (remote !== this.remote) {
+                    return;
+                }
                 try {
                     await handler(...args);
                 } catch (error) {
@@ -442,15 +480,20 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
         on('secret', async () => {
             this.pairingRequested = true;
             await this.setStateAsync('info.pairingRequired', true, true);
-            await this.setStateAsync('info.connection', false, true);
+            await this.setConnected(false);
             this.log.info('Pairing required: enter the code shown on the TV into control.pairingCode.');
         });
 
         on('ready', async () => {
             this.lastPowered = null;
             this.pairingRequested = false;
+            this.unpairedCount = 0;
+            this.unreachableLogged = false;
+            this.needsFreshConnect = false;
+            this.probeFailures = 0;
+            this.clearReconnect();
             await this.setStateAsync('info.pairingRequired', false, true);
-            await this.setStateAsync('info.connection', true, true);
+            await this.setConnected(true);
             this.lastRemoteReady = Date.now();
             await this.setStateAsync('info.lastRemoteReady', this.lastRemoteReady, true);
             try {
@@ -499,17 +542,22 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
         });
 
         on('unpaired', async () => {
-            await this.setStateAsync('info.connection', false, true);
+            // The TV also resets the connection when it switches off, so a single report is not a lost pairing.
+            // The stored credentials are never deleted here; only control.forgetPairing does that.
+            this.unpairedCount += 1;
             await this.clearPlaybackAndAppStates();
+            if (this.unpairedCount < UNPAIRED_LIMIT) {
+                this.log.debug(
+                    `Android TV reset the connection (${this.unpairedCount}/${UNPAIRED_LIMIT}), reconnecting.`,
+                );
+                this.scheduleReconnect();
+                return;
+            }
+            await this.setConnected(false);
             await this.setStateAsync('info.pairingRequired', true, true);
             this.pairingRequested = true;
-
-            // Do NOT delete the stored credentials here.
-            // A temporary connection/authentication error must not cause a
-            // working pairing to be lost permanently. Credentials are only
-            // deleted deliberately via control.forgetPairing.
             this.log.warn(
-                'Android TV reported "unpaired". The stored pairing is kept. ' +
+                `Android TV reported "unpaired" ${UNPAIRED_LIMIT} times in a row. The stored pairing is kept. ` +
                     'If a new pairing is really required, use control.forgetPairing.',
             );
         });
@@ -518,7 +566,6 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             if (this.stopping) {
                 return;
             }
-            await this.setStateAsync('info.connection', false, true);
             await this.clearPlaybackAndAppStates();
             this.log.warn(`Android TV protocol error: ${this.errorText(error)}`);
             this.scheduleReconnect();
@@ -538,6 +585,74 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
             this.reconnectTimer = null;
             void this.connect();
         }, seconds * 1000);
+    }
+
+    /**
+     * Check whether the remote port of the TV accepts connections.
+     *
+     * @param {string} host TV host
+     * @param {number} port remote port
+     * @param {number} timeoutMs give up after this time
+     */
+    probePort(host, port, timeoutMs) {
+        return new Promise(resolve => {
+            const socket = net.connect({ host, port, family: 4 });
+            const done = ok => {
+                socket.destroy();
+                resolve(ok);
+            };
+            socket.setTimeout(timeoutMs, () => done(false));
+            socket.once('connect', () => done(true));
+            socket.once('error', () => done(false));
+        });
+    }
+
+    scheduleLinkWatch() {
+        if (this.stopping || this.linkWatchTimer) {
+            return;
+        }
+        this.linkWatchTimer = this.setTimeout(() => {
+            this.linkWatchTimer = null;
+            void this.checkLink().finally(() => this.scheduleLinkWatch());
+        }, this.reconnectSeconds() * 1000);
+    }
+
+    /**
+     * The remote library reconnects silently and gives up after some errors without any event.
+     * This check notices a switched-off TV and forces a fresh connection as soon as it is reachable again.
+     */
+    async checkLink() {
+        if (this.stopping || this.connecting || this.pairingRequested || !this.config.host) {
+            return;
+        }
+        try {
+            const host = String(this.config.host).trim();
+            const port = clampInt(this.config.remotePort, 6466, 1, 65535);
+            const reachable = await this.probePort(host, port, 3000);
+            if (this.stopping) {
+                return;
+            }
+            if (!reachable) {
+                this.probeFailures += 1;
+                if (this.probeFailures === PROBE_FAIL_LIMIT && !this.needsFreshConnect) {
+                    // TV switched off: the old connection is dead even if the library reports nothing.
+                    this.needsFreshConnect = true;
+                    this.lastPowered = false;
+                    await this.setStateAsync('info.powered', false, true);
+                    await this.setStateAsync('control.power', false, true);
+                    await this.clearPlaybackAndAppStates();
+                    this.log.debug('Android TV not reachable, waiting for it to come back.');
+                }
+                return;
+            }
+            this.probeFailures = 0;
+            if (this.needsFreshConnect && !this.reconnectTimer) {
+                this.log.debug('Android TV reachable again, reconnecting.');
+                await this.connect();
+            }
+        } catch (error) {
+            this.log.debug(`Link check failed: ${this.errorText(error)}`);
+        }
     }
 
     clearReconnect() {
@@ -629,8 +744,8 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
 
                 case 'control.reconnect': {
                     await this.setStateAsync(rel, false, true);
-                    await this.setStateAsync('info.connection', false, true);
                     this.pairingRequested = false;
+                    this.unpairedCount = 0;
                     await this.connect();
                     break;
                 }
@@ -647,7 +762,7 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
                         }
                         this.remote = null;
                     }
-                    await this.setStateAsync('info.connection', false, true);
+                    await this.setConnected(false);
                     await this.setStateAsync('info.pairingRequired', false, true);
                     this.log.info('Stored pairing deleted. Starting a new pairing.');
                     await this.connect();
@@ -1094,6 +1209,10 @@ class AndroidTvRemoteAdapter extends utils.Adapter {
                 this.discoveryBonjour = null;
             }
             this.clearReconnect();
+            if (this.linkWatchTimer) {
+                this.clearTimeout(this.linkWatchTimer);
+                this.linkWatchTimer = null;
+            }
             this.stopCastMonitor();
             await this.setStateAsync('info.connection', false, true);
             if (this.remote) {
